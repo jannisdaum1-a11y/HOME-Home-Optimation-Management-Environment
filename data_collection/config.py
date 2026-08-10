@@ -7,6 +7,9 @@ class Config():
         self.lat = lat
         self.lon = lon
 
+        self.p_grid_max = 10000  # Maximum grid power in Watts
+        self.p_grid_min = -10000  # Minimum grid power in Watts (negative for export)
+
 
 def set_config(cfg):
     global config
