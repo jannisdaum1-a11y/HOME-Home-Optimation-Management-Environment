@@ -6,7 +6,7 @@ from data_collection.config import get_config
 url = "https://historical-forecast-api.open-meteo.com/v1/forecast"
 
 class Weather():
-    def __init__(self, lat=None, lon=None, start_date=None, end_date=None, tilt=35, azimuth=0):
+    def __init__(self, lat=None, lon=None, start_date=None, end_date=None, tilt=0, azimuth=180):
         active_config = get_config()
 
         self.lat = lat if lat is not None else getattr(active_config, "lat", None)
@@ -24,8 +24,8 @@ class Weather():
         params = {
             "latitude": self.lat,
             "longitude": self.lon,
-            "start_date": self.start_date,
-            "end_date": self.end_date,
+            "start_date": self.start_date.strftime("%Y-%m-%d"),
+            "end_date": self.end_date.strftime("%Y-%m-%d"),
             "hourly": [
                 "temperature_2m",
                 "cloud_cover",

@@ -1,4 +1,5 @@
 import numpy as np
+from optimization.optimizer import Optimizer
 from data_collection.weather import Weather
 import pandas as pd
 from data_collection.config import get_config
@@ -12,6 +13,8 @@ class LoadProfile(ABC):
         time_delta = active_config.timestep
         self.load_profile = pd.Series(index=pd.date_range(start=start_date, end=end_date, freq=time_delta))
         self.calculate_load_profile()
+
+        Optimizer.register_object(self)
 
     @abstractmethod
     def calculate_load_profile(self):
