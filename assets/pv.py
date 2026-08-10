@@ -4,6 +4,8 @@ from optimization.optimizer import Optimizer
 
 from data_collection.config import get_config
 
+from pyomo.environ import ConcreteModel, Var, NonNegativeReals
+
 class PV():
     counter = 0
     def __init__(self, rated_power, name= "PV",lat=None, lon=None, tilt=0, azimuth=0, performance_ratio=1, temperature_coefficient=-0.005):
@@ -27,3 +29,15 @@ class PV():
         weather_data = self.weather.fetch_weather_data()
         pv_output = self.rated_power * self.performance_ratio * (weather_data["specific_radiation"] / 1000) * (1 + self.temperature_coefficient * (weather_data["temperature"] - 25))
         return pv_output
+
+    def create_variables(self, model:ConcreteModel):
+        def _p_bounds(model, t):
+            return (0, self.pv_output[t])
+        p_pv = Var(model.t, domain=NonNegativeReals, bounds=_p_bounds, initialize=0)
+        setattr(model, f"p_{self.name}", p_pv)
+
+    def create_constraints(self, model:ConcreteModel):
+        model.power_balance_lhs_terms.append(getattr(model, f"p_{self.name}"))
+        return
+
+
