@@ -1,0 +1,29 @@
+from assets.load import ConstantLoadProfile
+from assets.pv import PV
+from data_collection.config import Config, set_config
+from data_collection.prices import ConstPrice, SpotMarktPrices
+from optimization.optimizer import Optimizer
+
+
+def run() -> None:
+    set_config(
+        Config(
+            start_date="30.09.2025 22.15",
+            end_date="30.06.2026 22.00",
+            lat=51.1657,
+            lon=10.4515,
+        )
+    )
+
+    prices = SpotMarktPrices("data\\spotmarktpreise.csv")
+    export_prices = ConstPrice(const_price=0.08)
+
+    PV(rated_power=0, tilt=30, azimuth=180, temperature_coefficient=-0.005)
+    ConstantLoadProfile(constant_load=300)
+
+    optimizer = Optimizer(import_prices=prices, export_prices=export_prices)
+    optimizer.get_results()
+
+
+if __name__ == "__main__":
+    run()

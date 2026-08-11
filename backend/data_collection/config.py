@@ -11,6 +11,9 @@ class Config():
         self.p_grid_min = -10000  # Minimum grid power in Watts (negative for export)
 
 
+    config = None
+
+
 def set_config(cfg):
     global config
     config = cfg
