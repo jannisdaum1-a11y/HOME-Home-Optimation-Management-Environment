@@ -3,6 +3,7 @@ import pandas as pd
 
 from assets.asset import Asset
 from optimization.optimizer import Optimizer
+from data_collection.config import get_config
 from pyomo.environ import ConcreteModel, Var, NonNegativeReals, Binary, Constraint
 
 class Battery(Asset):
@@ -28,20 +29,23 @@ class Battery(Asset):
         # Create charge and discharge power variables
         p_charge = Var(model.t, domain=NonNegativeReals, bounds=(0, self.max_charge_rate))
         p_discharge = Var(model.t, domain=NonNegativeReals, bounds=(0, self.max_discharge_rate))
-        b_charge = Var(model.t, domain=Binary)
         setattr(model, f"p_charge_{self.name}", p_charge)
         setattr(model, f"p_discharge_{self.name}", p_discharge)
-        setattr(model, f"b_charge_{self.name}", b_charge)
+
+        if get_config().formulate_binary:
+            b_charge = Var(model.t, domain=Binary)
+            setattr(model, f"b_charge_{self.name}", b_charge)
 
     def create_constraints(self, model):
         # State of charge dynamics
         def state_of_charge(model, t):
             t0 = min(model.t)
             timestep = model.t[2]-model.t[1]
+            time_factor = timestep.total_seconds() / 3600
             if t == t0:
                 return getattr(model, f"soc_{self.name}")[t] == self.initial_rel_soc * self.capacity
             else:
-                return getattr(model, f"soc_{self.name}")[t] == getattr(model, f"soc_{self.name}")[t- timestep ] + self.charge_efficiency * getattr(model, f"p_charge_{self.name}")[t] - getattr(model, f"p_discharge_{self.name}")[t] / self.discharge_efficiency
+                return getattr(model, f"soc_{self.name}")[t] == getattr(model, f"soc_{self.name}")[t- timestep ] + time_factor * (self.charge_efficiency * getattr(model, f"p_charge_{self.name}")[t-timestep] - getattr(model, f"p_discharge_{self.name}")[t-timestep] / self.discharge_efficiency)
             
         setattr(
             model,
@@ -57,27 +61,28 @@ class Battery(Asset):
         model.power_balance_rhs_terms.append(getattr(model, f"p_charge_{self.name}"))
 
         # Charge and discharge cannot happen simultaneously
-        def no_bidirectional_use_1(model, t):
-            return getattr(model, f"p_charge_{self.name}")[t] <= self.max_charge_rate * getattr(model, f"b_charge_{self.name}")[t]
-        setattr(
-            model,
-            f"one_way_1_{self.name}",
-            Constraint(
-                model.t,
-                rule=lambda model, t: no_bidirectional_use_1(model, t)
+        if get_config().formulate_binary:
+            def no_bidirectional_use_1(model, t):
+                return getattr(model, f"p_charge_{self.name}")[t] <= self.max_charge_rate * getattr(model, f"b_charge_{self.name}")[t]
+            setattr(
+                model,
+                f"one_way_1_{self.name}",
+                Constraint(
+                    model.t,
+                    rule=lambda model, t: no_bidirectional_use_1(model, t)
+                )
             )
-        )
 
-        def no_bidirectional_use_2(model, t):
-            return getattr(model, f"p_discharge_{self.name}")[t] <= self.max_discharge_rate * (1 - getattr(model, f"b_charge_{self.name}")[t])
+            def no_bidirectional_use_2(model, t):
+                return getattr(model, f"p_discharge_{self.name}")[t] <= self.max_discharge_rate * (1 - getattr(model, f"b_charge_{self.name}")[t])
 
-        setattr(
-            model,
-            f"one_way_2_{self.name}",
-            Constraint(
-                model.t,
-                rule=lambda model, t: no_bidirectional_use_2(model, t)
+            setattr(
+                model,
+                f"one_way_2_{self.name}",
+                Constraint(
+                    model.t,
+                    rule=lambda model, t: no_bidirectional_use_2(model, t)
+                )
             )
-        )
 
         return

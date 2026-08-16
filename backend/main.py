@@ -19,7 +19,7 @@ def run() -> None:
     prices = SpotMarktPrices("data\\spotmarktpreise.csv")
     export_prices = ConstPrice(const_price=0.08)
 
-    PV(rated_power=0, tilt=30, azimuth=180, temperature_coefficient=-0.005)
+    PV(rated_power=1000, tilt=30, azimuth=180, temperature_coefficient=-0.005)
     ConstantLoadProfile(constant_load=300)
 
     Battery(capacity=1000, max_charge_rate=1000, max_discharge_rate=1000)

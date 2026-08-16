@@ -37,11 +37,22 @@ class Optimizer():
         self.model.p_import = pyo.Var(self.model.t, domain=pyo.NonNegativeReals, bounds=(0, active_config.p_grid_max), initialize=0)
         self.model.p_export = pyo.Var(self.model.t, domain=pyo.NonNegativeReals, bounds=(0, abs(active_config.p_grid_min)), initialize=0)
 
-        self.model.b_export = pyo.Var(self.model.t, domain=pyo.Binary, initialize=False)
-        def import_limit(model, t):
-            return model.p_import[t] <= abs(active_config.p_grid_max)*(1-model.b_export[t])
-        def export_limit(model, t):
-            return model.p_export[t] <= abs(active_config.p_grid_min)*model.b_export[t]
+        if get_config().formulate_binary:
+            # Avoid simultaneously import/export with binary variable
+            self.model.b_export = pyo.Var(self.model.t, domain=pyo.Binary, initialize=False)
+            def import_limit(model, t):
+                return model.p_import[t] <= abs(active_config.p_grid_max)*(1-model.b_export[t])
+            def export_limit(model, t):
+                return model.p_export[t] <= abs(active_config.p_grid_min)*model.b_export[t]
+        else:
+            # Avoid simultaneously import/export with export restriction in case of negative import prices
+            def import_limit(model, t):
+                return model.p_import[t] <= abs(active_config.p_grid_max)
+            def export_limit(model, t):
+                if self.import_prices.prices_t[t]>=0:
+                    return model.p_export[t] <=abs(active_config.p_grid_min)
+                else:
+                    return model.p_export[t] == 0
         self.model.import_constraint = pyo.Constraint(
             self.model.t,
             rule=lambda model, t: import_limit(model, t)
