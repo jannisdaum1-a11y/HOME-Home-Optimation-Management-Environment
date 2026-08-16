@@ -1,5 +1,6 @@
 from assets.load import ConstantLoadProfile
 from assets.pv import PV
+from assets.battery import Battery
 from data_collection.config import Config, set_config
 from data_collection.prices import ConstPrice, SpotMarktPrices
 from optimization.optimizer import Optimizer
@@ -20,6 +21,8 @@ def run() -> None:
 
     PV(rated_power=0, tilt=30, azimuth=180, temperature_coefficient=-0.005)
     ConstantLoadProfile(constant_load=300)
+
+    Battery(capacity=1000, max_charge_rate=1000, max_discharge_rate=1000)
 
     optimizer = Optimizer(import_prices=prices, export_prices=export_prices)
     optimizer.get_results()

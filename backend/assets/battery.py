@@ -3,6 +3,7 @@ import pandas as pd
 
 from assets.asset import Asset
 from optimization.optimizer import Optimizer
+from pyomo.environ import ConcreteModel, Var, NonNegativeReals, Binary, Constraint
 
 class Battery(Asset):
     counter = 0
@@ -21,33 +22,62 @@ class Battery(Asset):
 
     def create_variables(self, model):
         # Create state of charge variable
-        soc = model.soc = model.Var(model.t, domain=model.NonNegativeReals, bounds=(0, self.capacity))
+        soc = Var(model.t, domain=NonNegativeReals, bounds=(0, self.capacity))
         setattr(model, f"soc_{self.name}", soc)
 
         # Create charge and discharge power variables
-        p_charge = model.p_charge = model.Var(model.t, domain=model.NonNegativeReals, bounds=(0, self.max_charge_rate))
-        p_discharge = model.p_discharge = model.Var(model.t, domain=model.NonNegativeReals, bounds=(0, self.max_discharge_rate))
-        b_charge = model.b_charge = model.Var(model.t, domain=model.Binary)
+        p_charge = Var(model.t, domain=NonNegativeReals, bounds=(0, self.max_charge_rate))
+        p_discharge = Var(model.t, domain=NonNegativeReals, bounds=(0, self.max_discharge_rate))
+        b_charge = Var(model.t, domain=Binary)
         setattr(model, f"p_charge_{self.name}", p_charge)
         setattr(model, f"p_discharge_{self.name}", p_discharge)
         setattr(model, f"b_charge_{self.name}", b_charge)
 
     def create_constraints(self, model):
         # State of charge dynamics
-        t0 = min(model.t)
-        for t in model.t:
+        def state_of_charge(model, t):
+            t0 = min(model.t)
+            timestep = model.t[2]-model.t[1]
             if t == t0:
-                # Set initial state of charge
-                model.add_constraint(getattr(model, f"soc_{self.name}")[t] == self.initial_rel_soc * self.capacity)
+                return getattr(model, f"soc_{self.name}")[t] == self.initial_rel_soc * self.capacity
             else:
-                # Update state of charge based on charge and discharge
-                model.add_constraint(getattr(model, f"soc_{self.name}")[t] == getattr(model, f"soc_{self.name}")[t-1] + self.charge_efficiency * getattr(model, f"p_charge_{self.name}")[t] - getattr(model, f"p_discharge_{self.name}")[t] / self.discharge_efficiency)
-
+                return getattr(model, f"soc_{self.name}")[t] == getattr(model, f"soc_{self.name}")[t- timestep ] + self.charge_efficiency * getattr(model, f"p_charge_{self.name}")[t] - getattr(model, f"p_discharge_{self.name}")[t] / self.discharge_efficiency
+            
+        setattr(
+            model,
+            f"soc_constraint_{self.name}",
+            Constraint(
+                model.t,
+                rule=lambda model, t: state_of_charge(model, t)
+            )
+        )
+        
         # Power balance constraints
         model.power_balance_lhs_terms.append(getattr(model, f"p_discharge_{self.name}"))
         model.power_balance_rhs_terms.append(getattr(model, f"p_charge_{self.name}"))
 
         # Charge and discharge cannot happen simultaneously
-        for t in model.t:
-            model.add_constraint(getattr(model, f"p_charge_{self.name}")[t] <= self.max_charge_rate * getattr(model, f"b_charge_{self.name}")[t])
-            model.add_constraint(getattr(model, f"p_discharge_{self.name}")[t] <= self.max_discharge_rate * (1 - getattr(model, f"b_charge_{self.name}")[t]))
+        def no_bidirectional_use_1(model, t):
+            return getattr(model, f"p_charge_{self.name}")[t] <= self.max_charge_rate * getattr(model, f"b_charge_{self.name}")[t]
+        setattr(
+            model,
+            f"one_way_1_{self.name}",
+            Constraint(
+                model.t,
+                rule=lambda model, t: no_bidirectional_use_1(model, t)
+            )
+        )
+
+        def no_bidirectional_use_2(model, t):
+            return getattr(model, f"p_discharge_{self.name}")[t] <= self.max_discharge_rate * (1 - getattr(model, f"b_charge_{self.name}")[t])
+
+        setattr(
+            model,
+            f"one_way_2_{self.name}",
+            Constraint(
+                model.t,
+                rule=lambda model, t: no_bidirectional_use_2(model, t)
+            )
+        )
+
+        return
