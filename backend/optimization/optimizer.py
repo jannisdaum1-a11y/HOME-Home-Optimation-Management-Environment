@@ -33,11 +33,10 @@ class Optimizer():
         self.model.t = pyo.Set(initialize=pd.date_range(start=active_config.start_date, end=active_config.end_date - active_config.timestep, freq=active_config.timestep))
 
         # Variables
-        
         self.model.p_import = pyo.Var(self.model.t, domain=pyo.NonNegativeReals, bounds=(0, active_config.p_grid_max), initialize=0)
         self.model.p_export = pyo.Var(self.model.t, domain=pyo.NonNegativeReals, bounds=(0, abs(active_config.p_grid_min)), initialize=0)
 
-        if get_config().formulate_binary:
+        if True:#get_config().formulate_binary:
             # Avoid simultaneously import/export with binary variable
             self.model.b_export = pyo.Var(self.model.t, domain=pyo.Binary, initialize=False)
             def import_limit(model, t):
@@ -124,6 +123,10 @@ class Optimizer():
 
     def solve(self):
         solver = pyo.SolverFactory("appsi_highs")
+        solver.options["mip_rel_gap"] = 0.02
+        solver.options["time_limit"] = 180
+        solver.options["threads"] = 0
+        solver.options["presolve"] = "on"    # schnell eine gute Lösung finden
 
         result = solver.solve(
             self.model,
