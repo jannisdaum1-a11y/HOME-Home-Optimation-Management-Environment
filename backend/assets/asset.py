@@ -1,11 +1,23 @@
 from abc import abstractmethod
 from pyomo.environ import ConcreteModel
 
+from data_collection.config import get_config
+
 class Asset:
 
     @abstractmethod
-    def __init__(self):
-        return
+    def __init__(self,expandable=False, capex=0, lifetime=0, wacc=0):
+        self.capex = capex
+        self.lifetime = lifetime
+        self.expandable = expandable
+
+        # General wacc or specific
+        if wacc:
+            self.wacc = wacc
+        elif get_config().wacc:
+            self.wacc = get_config().wacc
+        else:
+            self.wacc = 0
 
     @abstractmethod
     def create_variables(self, model:ConcreteModel):
@@ -20,4 +32,18 @@ class Asset:
         Create the constraints for the asset in the optimization model.
         """
         return
+
+    def annuity_factor(self):
+        """Return the annualized Factor using the capital recovery factor."""
+        if self.lifetime <= 0:
+            raise ValueError("lifetime must be greater than zero")
+
+        if self.wacc == 0:
+            return 1 / self.lifetime
+
+        growth_factor = (1 + self.wacc) ** self.lifetime
+        return  self.wacc * growth_factor / (growth_factor - 1)
+
+    def annualized_invest(self, model):
+        return 0
 

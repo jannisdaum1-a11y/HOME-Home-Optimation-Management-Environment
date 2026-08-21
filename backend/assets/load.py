@@ -23,6 +23,8 @@ class LoadProfile(Asset):
             )
         self.calculate_load_profile()
 
+        super().__init__()
+
         Optimizer.register_object(self)
 
     def create_variables(self, model:ConcreteModel):

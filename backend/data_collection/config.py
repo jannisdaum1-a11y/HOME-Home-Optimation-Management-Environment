@@ -10,6 +10,7 @@ class Config():
         self.p_grid_max = 10000  # Maximum grid power in Watts
         self.p_grid_min = -10000  # Minimum grid power in Watts (negative for export)
 
+        self.wacc = 0
         self.formulate_binary = False
 
     config = None

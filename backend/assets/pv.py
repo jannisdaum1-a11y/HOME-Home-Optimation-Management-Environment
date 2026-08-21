@@ -3,12 +3,26 @@ from data_collection.weather import Weather
 from optimization.optimizer import Optimizer
 
 from data_collection.config import get_config
+from assets.asset import Asset
 
 from pyomo.environ import ConcreteModel, Var, NonNegativeReals
 
-class PV():
+class PV(Asset):
     counter = 0
-    def __init__(self, rated_power, name= "PV",lat=None, lon=None, tilt=0, azimuth=0, performance_ratio=1, temperature_coefficient=-0.005):
+    def __init__(self,
+                 rated_power,
+                 name= "PV",
+                 lat=None,
+                 lon=None,
+                 tilt=0,
+                 azimuth=0,
+                 performance_ratio=1,
+                 temperature_coefficient=-0.005,
+                 spec_capex=1000,
+                 lifetime=False,
+                 wacc=False,
+                 expandable=False
+                 ):
         active_config = get_config()
         self.name = f"{name}_{PV.counter}"
         PV.counter += 1
@@ -22,6 +36,7 @@ class PV():
         self.weather = Weather(self.lat, self.lon, tilt=tilt, azimuth=azimuth)
         self.pv_output = self.calculate_pv_output()
 
+        super().__init__(expandable,rated_power*spec_capex, lifetime, wacc) 
         Optimizer.register_object(self)
         
 

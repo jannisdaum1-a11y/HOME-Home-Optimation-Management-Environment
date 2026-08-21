@@ -70,6 +70,18 @@ class Optimizer():
             obj.create_variables(self.model)
             obj.create_constraints(self.model)
 
+    def capacity_optimization(self):
+
+        # Add cost term for capacity expansion
+        annualized_invest = 0
+        for obj in Optimizer.objects.values():
+            if obj.expandable:
+                annualized_invest += obj.annualized_invest(self.model)
+
+        return annualized_invest
+            
+                    
+
 
     def objective_function(self):
         if self.import_prices is None or self.export_prices is None:
@@ -91,7 +103,8 @@ class Optimizer():
                 time_factor
                 *(self.import_prices.prices_t[t]/1000 * self.model.p_import[t]
                 - self.export_prices.prices_t[t]/1000 * self.model.p_export[t])
-                for t in self.model.t),
+                for t in self.model.t)
+                + self.capacity_optimization(),
             sense=pyo.minimize
         )
 
@@ -103,11 +116,14 @@ class Optimizer():
             pyo.Var,
             active=True
         ):
-
-            results[var.name] = [
-                pyo.value(var[t])
-                for t in self.model.t
-            ]
+            if var.is_indexed():
+                results[var.name] = [
+                    pyo.value(var[t])
+                    for t in self.model.t
+                ]
+            else:
+                value = pyo.value(var)
+                results[var.name] = [value] * len(self.model.t)
 
         results_df = pd.DataFrame(
             results,
@@ -119,7 +135,7 @@ class Optimizer():
         
 
 
-        return 
+        return results_df
 
     def solve(self):
         solver = pyo.SolverFactory("appsi_highs")

@@ -7,7 +7,7 @@
 
         {
             "name": "Python: pytest",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "module": "pytest",
             "args": ["-q"],

@@ -41,9 +41,8 @@ class Prices(ABC):
             raise ValueError(f"Unsupported unit conversion from {from_unit} to {to_unit}")
 
         conversion_factor = unit_conversion[to_unit] / unit_conversion[from_unit]
-        # Support both DataFrame with a 'price' column and a Series of prices
-        prices_df *= conversion_factor
-        return prices_df
+        # Support both DataFrames and Series without modifying the input.
+        return prices_df * conversion_factor
 
     @abstractmethod
     def _format_prices(self, prices_df: pd.DataFrame) -> pd.DataFrame:
@@ -72,7 +71,7 @@ class SpotMarktPrices(Prices):
                 )
 
         prices = prices_df["Spotmarktpreis in ct/kWh"][timestamps].rename("prices")
-        prices.values[:] = self._convert_units(prices.values, from_unit="ct/kWh", to_unit="€/kWh")
+        prices = self._convert_units(prices, from_unit="ct/kWh", to_unit="€/kWh")
 
         return prices
 

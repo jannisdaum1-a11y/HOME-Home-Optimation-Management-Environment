@@ -22,10 +22,10 @@ def run() -> None:
     PV(rated_power=1000, tilt=30, azimuth=180, temperature_coefficient=-0.005)
     ConstantLoadProfile(constant_load=300)
 
-    Battery(capacity=1000, max_charge_rate=1000, max_discharge_rate=1000)
+    Battery(expandable=True, lifetime=25, wacc=0, spec_capex=0.18, capacity=1000, max_charge_rate=1000, max_discharge_rate=1000)
 
     optimizer = Optimizer(import_prices=prices, export_prices=export_prices)
-    optimizer.get_results()
+    results = optimizer.get_results()
 
 
 if __name__ == "__main__":
