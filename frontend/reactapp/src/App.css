@@ -1,15 +1,37 @@
+.AppShell {
+    height: 100vh;
+    overflow: hidden;
+    padding: 18px 0 0;
+    background: linear-gradient(135deg, rgba(8, 127, 120, 0.06), transparent 38%), var(--paper);
+}
+
+.TopBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin: 0 24px 14px;
+}
+
 .MainContent {
     display: grid;
     grid-template-columns: 220px minmax(0, 1fr) 310px;
     width: 100%;
-    min-height: 100vh;
+    height: calc(100vh - 74px);
     gap: 18px;
-    padding: 24px;
-    background: linear-gradient(135deg, rgba(8, 127, 120, 0.06), transparent 38%), var(--paper);
+    padding: 0 24px 24px;
+    overflow: hidden;
+}
+
+.MainContent.results-mode {
+    grid-template-columns: minmax(0, 1fr);
 }
 
 .MainContent > aside {
     min-width: 0;
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
     background: var(--panel);
     border: 1px solid var(--line);
     border-radius: 12px;
@@ -22,6 +44,187 @@
 
 .MainContent > aside:last-child {
     padding: 24px;
+}
+
+.InspectorColumn {
+    display: flex;
+    flex-direction: column;
+}
+
+.Workspace {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+}
+
+.Tabs {
+    display: flex;
+    gap: 4px;
+    width: fit-content;
+    margin: 0;
+    padding: 4px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--panel);
+}
+
+.Tab {
+    padding: 9px 16px;
+    border: 0;
+    border-radius: 5px;
+    color: var(--muted);
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
+.Tab:hover,
+.Tab.active {
+    color: var(--ink);
+    background: var(--accent-soft);
+}
+
+.ViewContent {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+}
+
+.ViewContent > .DragAndDrop {
+    flex: 1;
+}
+
+.CalculateButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 13px;
+    border: 0;
+    border-radius: 7px;
+    color: #fff;
+    background: var(--accent);
+    box-shadow: 0 8px 18px rgba(8, 127, 120, 0.25);
+    cursor: pointer;
+    font-weight: 700;
+    flex-shrink: 0;
+    transition: background-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+
+.CalculateButton span {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+.CalculateButton:hover {
+    background: #066861;
+    box-shadow: 0 11px 22px rgba(8, 127, 120, 0.3);
+    transform: translateY(-2px);
+}
+
+.CalculateButton:focus-visible,
+.Tab:focus-visible {
+    outline: 3px solid rgba(8, 127, 120, 0.25);
+    outline-offset: 2px;
+}
+
+.ResultsView {
+    flex: 1;
+    padding: 28px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--panel);
+    box-shadow: var(--shadow);
+}
+
+.ResultsHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--line);
+}
+
+.Eyebrow {
+    margin: 0 0 4px;
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.ResultsView h1 {
+    margin: 0;
+    color: var(--ink);
+    font-family: var(--heading);
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+}
+
+.Status {
+    padding: 6px 10px;
+    border-radius: 999px;
+    color: var(--muted);
+    background: #eef2f0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.Status.ready {
+    color: var(--accent);
+    background: var(--accent-soft);
+}
+
+.ResultsEmpty {
+    max-width: 380px;
+    margin: 42px auto;
+    color: var(--muted);
+    text-align: center;
+}
+
+.ResultGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    padding-top: 22px;
+}
+
+.ResultCard {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-height: 150px;
+    padding: 18px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fbfcfb;
+}
+
+.ResultCard span,
+.ResultCard small {
+    color: var(--muted);
+    font-size: 0.78rem;
+}
+
+.ResultCard strong {
+    margin-top: auto;
+    color: var(--ink);
+    font-family: var(--heading);
+    font-size: 2rem;
+}
+
+.ResultCard strong small {
+    font-family: var(--sans);
+    font-size: 0.8rem;
+}
+
+.result-primary {
+    border-color: #b8ded5;
+    background: var(--accent-soft);
 }
 
 @media (max-width: 960px) {
@@ -38,12 +241,52 @@
     .MainContent {
         display: flex;
         flex-direction: column;
-        padding: 12px;
+        height: calc(100vh - 74px);
+        padding: 0 12px 12px;
     }
 
     .MainContent > aside:first-child,
     .MainContent > aside:last-child {
         padding: 16px;
+    }
+
+    .MainContent > aside {
+        max-height: 300px;
+    }
+
+    .Workspace {
+        min-height: 620px;
+        padding: 0;
+    }
+
+    .Tabs {
+        width: 100%;
+    }
+
+    .TopBar {
+        align-items: stretch;
+        flex-direction: column;
+        margin: 0 12px 14px;
+    }
+
+    .TopBar .CalculateButton {
+        align-self: flex-end;
+    }
+
+    .Tab {
+        flex: 1;
+    }
+
+    .ResultsView {
+        padding: 18px;
+    }
+
+    .ResultsHeader {
+        flex-direction: column;
+    }
+
+    .ResultGrid {
+        grid-template-columns: 1fr;
     }
 }
 

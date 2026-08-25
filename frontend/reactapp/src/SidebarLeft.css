@@ -4,7 +4,21 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 6px;
     height: 100%;
+}
+
+.SideBarLeft::-webkit-scrollbar,
+.SideBarRight::-webkit-scrollbar {
+    width: 7px;
+}
+
+.SideBarLeft::-webkit-scrollbar-thumb,
+.SideBarRight::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: #b8c9c5;
 }
 
 .SideBarLeft::before {

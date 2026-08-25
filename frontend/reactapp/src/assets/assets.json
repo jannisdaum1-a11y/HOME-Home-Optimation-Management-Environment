@@ -1,17 +1,28 @@
 {
+    "GridConnection":{
+        "name": "grid_connection",
+        "image": "src/assets/GridConnection.png"
+    },
+    "Load":{
+        "name": "load",
+        "image": "src/assets/Load.png"
+    },
     "PV": {
         "name": "pv",
         "image": "src/assets/PV.png",
-        "Capacity": 0
+        "Capacity": 0,
+        "expandable": false
     },
     "Battery": {
         "name": "battery",
         "image": "src/assets/Battery.png",
-        "Capacity": 0
+        "Capacity": 0,
+        "expandable": false
     },
     "EV": {
         "name": "ev",
+        "image": "src/assets/Eauto.png",
         "Capacity": 0,
-        "image": "src/assets/Eauto.png"
+        "expandable": false
     }
 }

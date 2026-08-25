@@ -28,17 +28,24 @@ function SidebarRight({selectedAsset, setAssets, setSelectedAsset} : SidebarRigh
                 <label>{name}: </label>
 
                 <input
-                    value={String(value)}
+                    type={typeof value === 'boolean' ? 'checkbox' : typeof value === 'number' ? 'number' : 'text'}
+                    {...(typeof value === 'boolean'
+                        ? {checked: value}
+                        : {value: String(value)})}
                     disabled={not_editable.includes(name)}
                     onChange={(e) => {
-                        const value = e.target.value;
+                        const nextValue = typeof value === 'boolean'
+                            ? e.currentTarget.checked
+                            : typeof value === 'number'
+                                ? Number(e.currentTarget.value)
+                                : e.currentTarget.value;
                         setAssets(prev => prev.map(object =>
                             object.name === selectedAsset.name
-                                ? {...object, [name]: value}
+                                ? {...object, [name]: nextValue}
                                 : object
                         ));
                         setSelectedAsset(prev => prev && prev.name === selectedAsset.name
-                            ? {...prev, [name]: value}
+                            ? {...prev, [name]: nextValue}
                             : prev
                         );
                     }
