@@ -1,20 +1,18 @@
 import './Results.css';
 
-type Asset = {
-    image: string;
-    [key: string]: unknown;
-};
-
 type ResultsProps = {
-    objects: Asset[];
     hasCalculated: boolean;
+    calculationResult: {
+        objective_value: number | null;
+        results: {
+            columns: string[];
+            index: string[];
+            data: (number | string | null)[][];
+        };
+    } | null;
 };
 
-function Results({objects, hasCalculated}: ResultsProps) {
-    const totalCapacity = objects.reduce((total, object) =>
-        total + (typeof object.Capacity === 'number' ? object.Capacity : 0), 0
-    );
-
+function Results({hasCalculated, calculationResult}: ResultsProps) {
     return (
         <section className="ResultsView" aria-labelledby="results-title">
             <div className="ResultsHeader">
@@ -29,23 +27,33 @@ function Results({objects, hasCalculated}: ResultsProps) {
             {!hasCalculated ? (
                 <p className="ResultsEmpty">Platziere Anlagen in der Konfiguration und starte anschließend die Berechnung.</p>
             ) : (
-                <div className="ResultGrid">
-                    <article className="ResultCard result-primary">
-                        <span>Komponenten</span>
-                        <strong>{objects.length}</strong>
-                        <small>im System platziert</small>
-                    </article>
-                    <article className="ResultCard">
-                        <span>Gesamtkapazität</span>
-                        <strong>{totalCapacity.toLocaleString('de-DE')} <small>kWh</small></strong>
-                        <small>konfigurierte Kapazität</small>
-                    </article>
-                    <article className="ResultCard">
-                        <span>Systemstatus</span>
-                        <strong>Bereit</strong>
-                        <small>Ergebnisdaten verfügbar</small>
-                    </article>
-                </div>
+                calculationResult ? (
+                    <>
+                        <p className="ObjectiveValue">
+                            Zielfunktionswert: <strong>{calculationResult.objective_value ?? 'n/a'}</strong>
+                        </p>
+                        <div className="ResultTableWrapper">
+                            <table className="ResultTable">
+                                <thead>
+                                    <tr>
+                                        <th>Zeitpunkt</th>
+                                        {calculationResult.results.columns.map(column => <th key={column}>{column}</th>)}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {calculationResult.results.data.map((row, rowIndex) => (
+                                        <tr key={calculationResult.results.index[rowIndex]}>
+                                            <th>{calculationResult.results.index[rowIndex]}</th>
+                                            {row.map((value, columnIndex) => <td key={`${rowIndex}-${columnIndex}`}>{String(value ?? '-')}</td>)}
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </>
+                ) : (
+                    <p className="ResultsEmpty">Keine Ergebnisdaten vom Backend erhalten.</p>
+                )
             )}
         </section>
     );

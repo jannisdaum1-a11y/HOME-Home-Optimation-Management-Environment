@@ -124,6 +124,19 @@
     transform: translateY(-2px);
 }
 
+.CalculateButton:disabled {
+    opacity: 0.7;
+    cursor: wait;
+    transform: none;
+}
+
+.CalculationError {
+    margin: -4px 24px 10px;
+    color: #a44d2e;
+    font-size: 0.82rem;
+    text-align: right;
+}
+
 .CalculateButton:focus-visible,
 .Tab:focus-visible {
     outline: 3px solid rgba(8, 127, 120, 0.25);

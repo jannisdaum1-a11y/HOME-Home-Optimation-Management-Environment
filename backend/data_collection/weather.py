@@ -1,7 +1,7 @@
 import pandas as pd 
 import requests
 
-from data_collection.config import get_config
+from .config import get_config
 
 url = "https://historical-forecast-api.open-meteo.com/v1/forecast"
 

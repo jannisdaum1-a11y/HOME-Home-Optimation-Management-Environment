@@ -54,6 +54,59 @@
     text-align: center;
 }
 
+.ObjectiveValue {
+    margin: 22px 0 0;
+    color: var(--muted);
+}
+
+.ObjectiveValue strong {
+    color: var(--ink);
+}
+
+.ResultTableWrapper {
+    max-height: calc(100vh - 210px);
+    margin: 22px 0 0;
+    overflow: auto;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #f5f8f6;
+}
+
+.ResultTable {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--ink);
+    font: 0.8rem/1.5 var(--mono, Consolas, monospace);
+    white-space: nowrap;
+}
+
+.ResultTable th,
+.ResultTable td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--line);
+    text-align: right;
+}
+
+.ResultTable thead th {
+    position: sticky;
+    top: 0;
+    color: var(--muted);
+    background: #e8f0ed;
+    font-family: var(--sans);
+    font-size: 0.75rem;
+    text-align: right;
+}
+
+.ResultTable thead th:first-child,
+.ResultTable tbody th {
+    text-align: left;
+}
+
+.ResultTable tbody th {
+    color: var(--muted);
+    font-weight: 400;
+}
+
 .ResultGrid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));

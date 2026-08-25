@@ -1,7 +1,7 @@
-from assets.asset import Asset
-from optimization.optimizer import Optimizer
-from data_collection.weather import Weather
-from data_collection.config import get_config
+from .asset import Asset
+from ..optimization.optimizer import Optimizer
+from ..data_collection.weather import Weather
+from ..data_collection.config import get_config
 from abc import ABC, abstractmethod
 
 import pandas as pd

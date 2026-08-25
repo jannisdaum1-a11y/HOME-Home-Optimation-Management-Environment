@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
 
-from assets.asset import Asset
-from optimization.optimizer import Optimizer
-from data_collection.config import get_config
+from .asset import Asset
+from ..optimization.optimizer import Optimizer
+from ..data_collection.config import get_config
 from pyomo.environ import ConcreteModel, Var, NonNegativeReals, Binary, Constraint, Param
 
 class Battery(Asset):

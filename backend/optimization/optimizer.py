@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 import pyomo.environ as pyo
 
-from data_collection.config import get_config
-from data_collection.prices import Prices
+from ..data_collection.config import get_config
+from ..data_collection.prices import Prices
 
 
 class Optimizer():

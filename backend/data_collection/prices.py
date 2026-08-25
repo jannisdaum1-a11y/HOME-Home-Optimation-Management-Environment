@@ -1,6 +1,6 @@
 import pandas as pd
 from abc import ABC, abstractmethod
-from data_collection.config import get_config
+from .config import get_config
 
 base_unit = "€/kWh"
 unit_conversion = {

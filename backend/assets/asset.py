@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from pyomo.environ import ConcreteModel
 
-from data_collection.config import get_config
+from ..data_collection.config import get_config
 
 class Asset:
 

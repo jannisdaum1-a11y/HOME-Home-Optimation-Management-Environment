@@ -13,15 +13,48 @@ type Asset = {
 
 type Tab = 'configuration' | 'results';
 
+type CalculationResult = {
+    objective_value: number | null;
+    results: {
+        columns: string[];
+        index: string[];
+        data: (number | string | null)[][];
+    };
+};
+
 function App() {
     const [objects, setObjects] = useState<Asset[]>([]);
     const [selectedObject, setSelectedObject] = useState<Asset|null>(null)
     const [activeTab, setActiveTab] = useState<Tab>('configuration');
     const [hasCalculated, setHasCalculated] = useState(false);
+    const [calculationResult, setCalculationResult] = useState<CalculationResult | null>(null);
+    const [isCalculating, setIsCalculating] = useState(false);
+    const [calculationError, setCalculationError] = useState<string | null>(null);
 
-    function startCalculation() {
-        setHasCalculated(true);
-        setActiveTab('results');
+    async function startCalculation() {
+        setIsCalculating(true);
+        setCalculationError(null);
+
+        try {
+            const response = await fetch('http://localhost:8000/calculate', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({objects}),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Backend antwortet mit Status ${response.status}`);
+            }
+
+            const result: CalculationResult = await response.json();
+            setCalculationResult(result);
+            setHasCalculated(true);
+            setActiveTab('results');
+        } catch (error) {
+            setCalculationError(error instanceof Error ? error.message : 'Berechnung konnte nicht gestartet werden.');
+        } finally {
+            setIsCalculating(false);
+        }
     }
 
     return (
@@ -43,11 +76,13 @@ function App() {
                     Ergebnisse
                 </button>
             </nav>
-            <button type="button" className="CalculateButton" onClick={startCalculation}>
+            <button type="button" className="CalculateButton" onClick={startCalculation} disabled={isCalculating}>
                 <span aria-hidden="true">→</span>
-                Berechnung starten
+                {isCalculating ? 'Wird berechnet...' : 'Berechnung starten'}
             </button>
         </div>
+
+        {calculationError && <p className="CalculationError" role="alert">{calculationError}</p>}
 
         <div className={activeTab === 'results' ? 'MainContent results-mode' : 'MainContent'}>
         {activeTab === 'configuration' && (
@@ -65,7 +100,10 @@ function App() {
                         setSelectedObject={setSelectedObject}
                     ></DragAndDrop>
                 ) : (
-                    <Results objects={objects} hasCalculated={hasCalculated}></Results>
+                    <Results
+                        hasCalculated={hasCalculated}
+                        calculationResult={calculationResult}
+                    ></Results>
                 )}
             </main>
 
