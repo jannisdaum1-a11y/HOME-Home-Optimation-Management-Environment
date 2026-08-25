@@ -1,0 +1,108 @@
+
+.DragAndDrop {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    min-width: 0;
+    min-height: 100%;
+    padding: 28px;
+    overflow: auto;
+    border: 1px dashed #abc9c2;
+    border-radius: 12px;
+    background: linear-gradient(rgba(8, 127, 120, 0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(8, 127, 120, 0.035) 1px, transparent 1px), var(--panel);
+    background-size: 28px 28px;
+    box-shadow: var(--shadow);
+}
+
+.DragAndDrop p {
+    text-align: center;
+    max-width: 280px;
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+    font-style: italic;
+}
+
+.DisplayObject {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 132px;
+    min-height: 132px;
+    padding: 16px;
+    margin: 8px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 8px 18px rgba(30, 57, 57, 0.07);
+    cursor: pointer;
+    transition: min-height 160ms ease, border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.DisplayObject:hover {
+    min-height: 178px;
+    border-color: var(--accent);
+    box-shadow: 0 12px 24px rgba(8, 127, 120, 0.14);
+    transform: translateY(-3px);
+}
+
+.DisplayObject img {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+}
+
+.DisplayObject p{
+    margin: 10px 0 0;
+    color: var(--ink);
+    font-size: 0.78rem;
+    font-style: normal;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.DeleteObject {
+    max-height: 0;
+    margin-top: 0;
+    padding: 0 9px;
+    border: 0 solid #efc3b0;
+    border-radius: 5px;
+    color: #a44d2e;
+    background: #fff7f3;
+    cursor: pointer;
+    font-size: 0.72rem;
+    font-weight: 700;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transition: max-height 160ms ease, margin-top 160ms ease, padding 160ms ease, opacity 160ms ease, background-color 160ms ease, border-color 160ms ease;
+}
+
+.DisplayObject:hover .DeleteObject,
+.DisplayObject:focus-within .DeleteObject {
+    max-height: 32px;
+    margin-top: 10px;
+    padding: 5px 9px;
+    border-width: 1px;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.DeleteObject:hover {
+    border-color: #d77b58;
+    background: #ffebe2;
+}
+
+.DeleteObject:focus-visible {
+    outline: 3px solid rgba(8, 127, 120, 0.25);
+    outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+    .DragAndDrop {
+        min-height: 340px;
+        padding: 18px;
+    }
+}

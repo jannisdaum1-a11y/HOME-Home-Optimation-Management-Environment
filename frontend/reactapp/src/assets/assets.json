@@ -1,0 +1,17 @@
+{
+    "PV": {
+        "name": "pv",
+        "image": "src/assets/PV.png",
+        "Capacity": 0
+    },
+    "Battery": {
+        "name": "battery",
+        "image": "src/assets/Battery.png",
+        "Capacity": 0
+    },
+    "EV": {
+        "name": "ev",
+        "Capacity": 0,
+        "image": "src/assets/Eauto.png"
+    }
+}

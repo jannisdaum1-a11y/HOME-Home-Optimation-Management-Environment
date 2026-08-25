@@ -1,0 +1,61 @@
+.SideBarRight {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-height: 100%;
+}
+
+.SideBarRight::before {
+    content: "Parameter";
+    display: block;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink);
+    font-family: var(--heading);
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.SideBarRight > p {
+    margin: auto 0;
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.7;
+}
+
+.SideBarRight > div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.SideBarRight label {
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.SideBarRight input {
+    width: 100%;
+    min-height: 40px;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    outline: none;
+    color: var(--ink);
+    background: #fbfcfb;
+    transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.SideBarRight input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(8, 127, 120, 0.13);
+}
+
+.SideBarRight input:disabled {
+    color: #849298;
+    background: #eef2f0;
+    cursor: not-allowed;
+}
