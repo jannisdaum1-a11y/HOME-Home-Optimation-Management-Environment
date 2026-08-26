@@ -16,11 +16,51 @@ function DisplayObject({object}: {object:Asset}) {
     return (
         <>
         <img src={object.image} alt={String(object.name)}></img>
-        <p>{object.name}</p>
+        <p>{String(object.name)}</p>
         </>
     )
 }
+type Dict = {
+    [key: string]: unknown;
+};
+function isDictionary(value: unknown): value is Dict {
+    return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
 
+function findDefaultValue(defaults: Dict, key: string): unknown {
+    if (key in defaults && !isDictionary(defaults[key])) {
+        return defaults[key];
+    }
+
+    for (const value of Object.values(defaults)) {
+        if (isDictionary(value)) {
+            const defaultValue = findDefaultValue(value, key);
+            if (defaultValue !== undefined) {
+                return defaultValue;
+            }
+        }
+    }
+
+    return undefined;
+}
+
+function applyDefaults(dict: Dict, defaults: Dict): Dict {
+    const result: Dict = {...dict};
+
+    for (const [key, value] of Object.entries(result)) {
+        if (isDictionary(value)) {
+            result[key] = applyDefaults(value, defaults);
+            continue;
+        }
+
+        const defaultValue = findDefaultValue(defaults, key);
+        if ((value === null || value === undefined) && defaultValue !== undefined) {
+            result[key] = structuredClone(defaultValue);
+        }
+    }
+
+    return result;
+}
 
 
 type DragAndDropProps = {
@@ -30,19 +70,16 @@ type DragAndDropProps = {
 };
 function DragAndDrop({objects, setObjects, setSelectedObject}: DragAndDropProps){
 
-    function handleDrop(e) {
+    function handleDrop(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
-    const object = e.dataTransfer.getData("asset");
-    const data: Asset = structuredClone(assets[object]);
-
-    /**Check for default value */
-    for (const [key, value] of Object.entries(data)) {
-        const default_value = objects[0][key] ?? false;
-
-        if (!value && default_value) {
-            data[key] = default_value;
-        }
+    const object = e.dataTransfer.getData("asset") as keyof typeof assets;
+    if (!(object in assets)) {
+        return;
     }
+
+    let data = structuredClone(assets[object]) as unknown as Asset;
+
+    data = applyDefaults(data, objects[0] ?? {}) as Asset;
 
     data.name = data.name + "_" + counter[object]++;
     setObjects(prev => [...prev, data]);
@@ -66,7 +103,7 @@ function DragAndDrop({objects, setObjects, setSelectedObject}: DragAndDropProps)
                 objects.map((element) => (
                     !(element.name==="config") &&
                     <div className='DisplayObject'
-                     key={element.name}
+                     key={String(element.name)}
                      onClick={() => setSelectedObject(element)}>
                         <DisplayObject object={element}></DisplayObject>
                         <button

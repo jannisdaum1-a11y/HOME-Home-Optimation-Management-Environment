@@ -46,7 +46,11 @@ def calculate(payload: CalculationPayload) -> dict:
     classtypes = [obj.get("class", False) for obj in objects]
     if not all(classtypes): ValueError("Unknown or undefined class")
     if not "config" in classtypes: ValueError("No Config found")
+
+
     for object in objects:
+        #Unpack sub-dictionaries
+        object = unpack_subdicts(object)
         class_type = object.get("class", False)
         if class_type == "config":
             set_config(Config(**object))
@@ -74,3 +78,10 @@ def calculate(payload: CalculationPayload) -> dict:
     
 
 
+def unpack_subdicts(data: dict, result_dict:dict = {}):
+    for key, value in data.items():
+        if isinstance(value, dict):
+            unpack_subdicts(value, result_dict)
+        else:
+            result_dict[key] = value
+    return result_dict

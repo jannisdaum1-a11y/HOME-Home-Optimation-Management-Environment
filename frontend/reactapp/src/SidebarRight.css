@@ -32,6 +32,42 @@
     gap: 5px;
 }
 
+.ParameterGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.NestedParameterGroup {
+    padding-left: 10px;
+    border-left: 2px solid var(--line);
+}
+
+.ParameterGroupToggle {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    width: 100%;
+    padding: 7px 8px;
+    border: 0;
+    color: var(--ink);
+    background: #eef2f0;
+    cursor: pointer;
+    font-weight: 700;
+    text-align: left;
+}
+
+.ParameterGroupToggle:hover {
+    color: var(--accent);
+    background: var(--accent-soft);
+}
+
+.ParameterField {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
 .SideBarRight label {
     color: var(--muted);
     font-size: 0.78rem;

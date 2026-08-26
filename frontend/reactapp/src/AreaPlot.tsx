@@ -101,7 +101,7 @@ function AreaPlot({CalculationResults, ColumnFilter, Unit}: AreaPlotProps) {
         tooltip: {
             trigger: 'axis',
             axisPointer: {type: 'line'},
-            valueFormatter: value => `${Number(value).toFixed(0)} {Unit}`,
+            valueFormatter: value => `${Number(value).toFixed(0)} ${Unit}`,
         },
         xAxis: {
             type: 'category',
@@ -115,7 +115,7 @@ function AreaPlot({CalculationResults, ColumnFilter, Unit}: AreaPlotProps) {
         },
         yAxis: {
             type: 'value',
-            name: Unit==='W' ? 'Leistung (W)': Unit==='Wh' ? 'Energie (Wh)' : null,
+            name: Unit === 'W' ? 'Leistung (W)' : Unit === 'Wh' ? 'Energie (Wh)' : undefined,
             nameTextStyle: {color: '#64747a'},
             axisLabel: {color: '#64747a'},
             splitLine: {lineStyle: {color: '#e8efec'}},
