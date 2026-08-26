@@ -5,7 +5,9 @@ type Asset = {
     [key: string]: unknown;
 };
 
-const not_editable = ["image"]
+/**Define which keys should not be ediable or displayed */
+const not_editable: string[] = ["image"]
+const not_visible: string[] = ["class", "image"]
 
 type SidebarRightProps = {
     selectedAsset:Asset | null;
@@ -24,6 +26,7 @@ function SidebarRight({selectedAsset, setAssets, setSelectedAsset} : SidebarRigh
 
     {asset &&
         Object.entries(asset).map(([name, value]) => (
+            !not_visible.includes(name) &&
             <div key={name}>
                 <label>{name}: </label>
 

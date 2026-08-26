@@ -1,6 +1,7 @@
 {
     "Config": {
         "name": "config",
+        "class": "config",
         "start_date" : "30.09.2025 22.15",
         "end_date" : "30.06.2026 22.00",
         "timestep" : 15,
@@ -14,21 +15,24 @@
         "formulate_binary" : false
     },
     "GridConnection":{
+        "class": "grid_connection",
         "name": "grid_connection",
         "image": "src/assets/GridConnection.png"
     },
     "Load":{
+        "class": "load",
         "name": "load",
         "image": "src/assets/Load.png"
     },
     "PV": {
+        "class": "pv",
         "name": "pv",
         "image": "src/assets/PV.png",
         "rated_power": 400,
         "lat" : null,
         "lon" : null,
-        "tilt" : 0.0,
-        "azimuth" : 0.0,
+        "tilt" : 30.0,
+        "azimuth" : 180.0,
         "performance_ratio" : 1,
         "temperature_coefficient" : -0.005,
         "spec_capex" : 1000,
@@ -37,6 +41,7 @@
         "expandable" : null
     },
     "Battery": {
+        "class": "battery",
         "name": "battery",
         "image": "src/assets/Battery.png",
         "capacity" : 1000,
@@ -52,6 +57,7 @@
         "capacity_limit" : 10000
     },
     "EV": {
+        "class": "ev",
         "name": "ev",
         "image": "src/assets/Eauto.png",
         "Capacity": 0,

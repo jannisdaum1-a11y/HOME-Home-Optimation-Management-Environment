@@ -21,7 +21,8 @@ class PV(Asset):
                  spec_capex=1000,
                  lifetime=False,
                  wacc=False,
-                 expandable=False
+                 expandable=False,
+                **kwargs
                  ):
         active_config = get_config()
         self.name = f"{name}_{PV.counter}"

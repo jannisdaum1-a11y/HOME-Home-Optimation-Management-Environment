@@ -43,23 +43,25 @@ def calculate(payload: CalculationPayload) -> dict:
     objects = payload.objects
 
     # Define Config
-    set_config(
-        Config(
-            start_date="30.09.2025 22.15",
-            end_date="30.06.2026 22.00",
-            lat=51.1657,
-            lon=10.4515,
-        )
-    )
+    classtypes = [obj.get("class", False) for obj in objects]
+    if not all(classtypes): ValueError("Unknown or undefined class")
+    if not "config" in classtypes: ValueError("No Config found")
+    for object in objects:
+        class_type = object.get("class", False)
+        if class_type == "config":
+            set_config(Config(**object))
+        elif class_type == "pv":
+            PV(**object)
+        elif class_type == "battery":
+            Battery(**object)
+        elif class_type =="load":
+            ConstantLoadProfile(constant_load=300)
+        elif class_type == "grid_connection":
+            pass
 
     # Define Model
     prices = SpotMarktPrices("data\\spotmarktpreise.csv")
     export_prices = ConstPrice(const_price=0.08)
-
-    PV(rated_power=1000, tilt=30, azimuth=180, temperature_coefficient=-0.005)
-    ConstantLoadProfile(constant_load=300)
-
-    Battery(expandable=True, lifetime=25, wacc=0, spec_capex=0.18, capacity=1000, max_charge_rate=1000, max_discharge_rate=1000)
 
     optimizer = Optimizer(import_prices=prices, export_prices=export_prices)
     results = optimizer.get_results()

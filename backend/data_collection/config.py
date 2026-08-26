@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 class Config():
-    def __init__(self, start_date, end_date, lat, lon):
+    def __init__(self, start_date, end_date, lat, lon, **kwargs):
         self.start_date = datetime.strptime(start_date, "%d.%m.%Y %H.%M")
         self.end_date = datetime.strptime(end_date, "%d.%m.%Y %H.%M")
         self.timestep = timedelta(minutes=15)

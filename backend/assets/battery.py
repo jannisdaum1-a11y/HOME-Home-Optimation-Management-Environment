@@ -20,7 +20,8 @@ class Battery(Asset):
                  lifetime=False,
                  wacc=False,
                  expandable=False,
-                 capacity_limit=np.inf
+                 capacity_limit=np.inf,
+                 **kwargs
                  ):
         
         self.name = f"{name}_{Battery.counter}"
