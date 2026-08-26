@@ -6,8 +6,10 @@ import SidebarRight from './SidebarRight'
 import DragAndDrop from './DragAndDrop'
 import Results from './Results'
 
+import assets from './assets/assets.json'
+
 type Asset = {
-    image: string;
+    image?: string;
     [key: string]: unknown;
 };
 
@@ -23,8 +25,8 @@ type CalculationResult = {
 };
 
 function App() {
-    const [objects, setObjects] = useState<Asset[]>([]);
-    const [selectedObject, setSelectedObject] = useState<Asset|null>(null)
+    const [objects, setObjects] = useState<Asset[]>([{...assets.Config}]);
+    const [selectedObject, setSelectedObject] = useState<Asset|null>(objects[0]??null)
     const [activeTab, setActiveTab] = useState<Tab>('configuration');
     const [hasCalculated, setHasCalculated] = useState(false);
     const [calculationResult, setCalculationResult] = useState<CalculationResult | null>(null);
@@ -91,7 +93,9 @@ function App() {
             </aside>
         )}
         
-        <div className='Workspace'>
+        <div className='Workspace' 
+        onKeyDown={(e)=>e.key ==='Escape'?setSelectedObject(objects[0])??null:null}
+        tabIndex={0}>
             <main className="ViewContent">
                 {activeTab === 'configuration' ? (
                     <DragAndDrop
@@ -115,6 +119,15 @@ function App() {
             </aside>
         )}
         </div>  
+        {isCalculating && (
+            <div className="CalculationOverlay" role="status" aria-live="polite" aria-label="Berechnung läuft">
+                <div className="CalculationLoader">
+                    <span className="Spinner" aria-hidden="true"></span>
+                    <strong>Berechnung läuft...</strong>
+                    <span>Bitte warten</span>
+                </div>
+            </div>
+        )}
         </div>
     )
 }

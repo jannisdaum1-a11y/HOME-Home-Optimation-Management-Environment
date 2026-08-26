@@ -54,6 +54,7 @@ function DragAndDrop({objects, setObjects, setSelectedObject}: DragAndDropProps)
             }
             {
                 objects.map((element) => (
+                    !(element.name==="config") &&
                     <div className='DisplayObject'
                      key={element.name}
                      onClick={() => setSelectedObject(element)}>

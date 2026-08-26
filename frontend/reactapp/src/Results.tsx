@@ -1,18 +1,18 @@
+import {useState} from 'react';
 import './Results.css';
+import Ausbauplanung from './Ausbauplanung';
+import Zeitreihen from './Zeitreihen';
+import Wirtschaftlichkeit from './Wirtschaftlichkeit';
+import type {CalculationResult, ResultsTab} from './ResultTypes';
 
 type ResultsProps = {
     hasCalculated: boolean;
-    calculationResult: {
-        objective_value: number | null;
-        results: {
-            columns: string[];
-            index: string[];
-            data: (number | string | null)[][];
-        };
-    } | null;
+    calculationResult: CalculationResult | null;
 };
 
 function Results({hasCalculated, calculationResult}: ResultsProps) {
+    const [activeResultsTab, setActiveResultsTab] = useState<ResultsTab>('Zeitreihen');
+
     return (
         <section className="ResultsView" aria-labelledby="results-title">
             <div className="ResultsHeader">
@@ -29,27 +29,22 @@ function Results({hasCalculated, calculationResult}: ResultsProps) {
             ) : (
                 calculationResult ? (
                     <>
-                        <p className="ObjectiveValue">
-                            Zielfunktionswert: <strong>{calculationResult.objective_value ?? 'n/a'}</strong>
-                        </p>
-                        <div className="ResultTableWrapper">
-                            <table className="ResultTable">
-                                <thead>
-                                    <tr>
-                                        <th>Zeitpunkt</th>
-                                        {calculationResult.results.columns.map(column => <th key={column}>{column}</th>)}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {calculationResult.results.data.map((row, rowIndex) => (
-                                        <tr key={calculationResult.results.index[rowIndex]}>
-                                            <th>{calculationResult.results.index[rowIndex]}</th>
-                                            {row.map((value, columnIndex) => <td key={`${rowIndex}-${columnIndex}`}>{String(value ?? '-')}</td>)}
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                        <nav className="ResultsTabs" aria-label="Ergebnisansichten">
+                            {(['Ausbauplanung', 'Zeitreihen', 'Wirtschaftlichkeit'] as ResultsTab[]).map(tab => (
+                                <button
+                                    key={tab}
+                                    type="button"
+                                    className={activeResultsTab === tab ? 'ResultsTab active' : 'ResultsTab'}
+                                    onClick={() => setActiveResultsTab(tab)}
+                                    aria-selected={activeResultsTab === tab}
+                                >
+                                    {tab}
+                                </button>
+                            ))}
+                        </nav>
+                        {activeResultsTab === 'Zeitreihen' && <Zeitreihen calculationResult={calculationResult} />}
+                        {activeResultsTab === 'Wirtschaftlichkeit' && <Wirtschaftlichkeit calculationResult={calculationResult} />}
+                        {activeResultsTab === 'Ausbauplanung' && <Ausbauplanung calculationResult={calculationResult} />}
                     </>
                 ) : (
                     <p className="ResultsEmpty">Keine Ergebnisdaten vom Backend erhalten.</p>

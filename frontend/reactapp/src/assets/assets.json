@@ -1,4 +1,18 @@
 {
+    "Config": {
+        "name": "config",
+        "start_date" : "30.09.2025 22.15",
+        "end_date" : "30.06.2026 22.00",
+        "timestep" : 15,
+        "lat" : 51.0,
+        "lon" : 10.0,
+
+        "p_grid_max" : 10000, 
+        "p_grid_min" : -10000,
+
+        "wacc" : 0,
+        "formulate_binary" : false
+    },
     "GridConnection":{
         "name": "grid_connection",
         "image": "src/assets/GridConnection.png"
