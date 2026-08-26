@@ -24,14 +24,32 @@
     "PV": {
         "name": "pv",
         "image": "src/assets/PV.png",
-        "Capacity": 0,
-        "expandable": false
+        "rated_power": 400,
+        "lat" : null,
+        "lon" : null,
+        "tilt" : 0.0,
+        "azimuth" : 0.0,
+        "performance_ratio" : 1,
+        "temperature_coefficient" : -0.005,
+        "spec_capex" : 1000,
+        "lifetime" : 25,
+        "wacc" : null,
+        "expandable" : null
     },
     "Battery": {
         "name": "battery",
         "image": "src/assets/Battery.png",
-        "Capacity": 0,
-        "expandable": false
+        "capacity" : 1000,
+        "max_charge_rate" :1000,
+        "max_discharge_rate" :1000,
+        "initial_rel_soc" : 0.5,
+        "charge_efficiency" : 1,
+        "discharge_efficiency" : 1,
+        "spec_capex" : 1000,
+        "lifetime" : false,
+        "wacc" : false,
+        "expandable" : false,
+        "capacity_limit" : 10000
     },
     "EV": {
         "name": "ev",

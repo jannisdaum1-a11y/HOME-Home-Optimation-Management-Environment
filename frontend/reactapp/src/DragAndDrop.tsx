@@ -34,6 +34,16 @@ function DragAndDrop({objects, setObjects, setSelectedObject}: DragAndDropProps)
     e.preventDefault();
     const object = e.dataTransfer.getData("asset");
     const data: Asset = structuredClone(assets[object]);
+
+    /**Check for default value */
+    for (const [key, value] of Object.entries(data)) {
+        const default_value = objects[0][key] ?? false;
+
+        if (!value && default_value) {
+            data[key] = default_value;
+        }
+    }
+
     data.name = data.name + "_" + counter[object]++;
     setObjects(prev => [...prev, data]);
     console.log(objects);
