@@ -36,6 +36,8 @@ class Optimizer():
         self.model.p_import = pyo.Var(self.model.t, domain=pyo.NonNegativeReals, bounds=(0, active_config.p_grid_max), initialize=0)
         self.model.p_export = pyo.Var(self.model.t, domain=pyo.NonNegativeReals, bounds=(0, abs(active_config.p_grid_min)), initialize=0)
 
+        self.model.ens = pyo.Var(self.model.t, domain=pyo.NonNegativeReals, bounds=(0, np.inf), initialize=0)
+
         if get_config().formulate_binary:
             # Avoid simultaneously import/export with binary variable
             self.model.b_export = pyo.Var(self.model.t, domain=pyo.Binary, initialize=False)
@@ -63,8 +65,8 @@ class Optimizer():
         
 
         # Power Balance
-        self.model.power_balance_lhs_terms = [self.model.p_import]
-        self.model.power_balance_rhs_terms = [self.model.p_export]
+        self.model.power_balance_lhs_terms = [self.model.p_import, self.model.ens] #Positive Power (Generation)
+        self.model.power_balance_rhs_terms = [self.model.p_export] #Negative Power (Load)
 
         for obj in Optimizer.objects.values():
             obj.create_variables(self.model)
@@ -94,15 +96,18 @@ class Optimizer():
         )
 
         time_factor = (get_config().timestep.total_seconds() / 3600)  # Convert timestep to hours
+        ens_cost = get_config().ens_cost
         self.model.obj = pyo.Objective(
 
             # Objective function: Minimize the total cost of electricity import and export
             # /1000 -> €/kWh to €/Wh
             # TimeFactor considers the interevall-length
             expr=sum(
-                time_factor
-                *(self.import_prices.prices_t[t]/1000 * self.model.p_import[t]
-                - self.export_prices.prices_t[t]/1000 * self.model.p_export[t])
+                time_factor*(
+                    self.import_prices.prices_t[t]/1000 * self.model.p_import[t]
+                    - self.export_prices.prices_t[t]/1000 * self.model.p_export[t]
+                    +self.model.ens[t]*ens_cost
+                    )
                 for t in self.model.t)
                 + self.capacity_optimization(),
             sense=pyo.minimize
