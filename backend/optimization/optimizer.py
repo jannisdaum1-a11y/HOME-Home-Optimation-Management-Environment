@@ -36,7 +36,7 @@ class Optimizer():
         self.model.p_import = pyo.Var(self.model.t, domain=pyo.NonNegativeReals, bounds=(0, active_config.p_grid_max), initialize=0)
         self.model.p_export = pyo.Var(self.model.t, domain=pyo.NonNegativeReals, bounds=(0, abs(active_config.p_grid_min)), initialize=0)
 
-        if True:#get_config().formulate_binary:
+        if get_config().formulate_binary:
             # Avoid simultaneously import/export with binary variable
             self.model.b_export = pyo.Var(self.model.t, domain=pyo.Binary, initialize=False)
             def import_limit(model, t):

@@ -1,6 +1,7 @@
 import pandas as pd
 from abc import ABC, abstractmethod
 from .config import get_config
+from .timeseries import TimeSeries
 
 base_unit = "€/kWh"
 unit_conversion = {
@@ -19,7 +20,7 @@ class Prices(ABC):
         self.end_date = active_config.end_date
         self.n_timesteps = len(pd.date_range(start=self.start_date, end=self.end_date, freq=active_config.timestep))
         self.timestep_length = active_config.timestep
-        self.prices_t = self._load_prices()
+        self.prices_t = TimeSeries(self._load_prices()).data
 
     
     def _load_prices(self):

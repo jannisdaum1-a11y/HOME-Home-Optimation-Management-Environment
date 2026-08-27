@@ -2,6 +2,7 @@ from .asset import Asset
 from ..optimization.optimizer import Optimizer
 from ..data_collection.weather import Weather
 from ..data_collection.config import get_config
+from ..data_collection.timeseries import TimeSeries
 from abc import ABC, abstractmethod
 
 import pandas as pd
@@ -16,11 +17,11 @@ class LoadProfile(Asset):
         start_date = active_config.start_date
         end_date = active_config.end_date
         time_delta = active_config.timestep
-        self.load_profile = pd.Series(
+        self.load_profile = TimeSeries(pd.Series(
             index=pd.date_range(start=start_date, end=end_date - time_delta, freq=time_delta),
             dtype=float,
             data=np.zeros(len(pd.date_range(start=start_date, end=end_date - time_delta, freq=time_delta)))
-            )
+            )).data
         self.calculate_load_profile()
 
         super().__init__()

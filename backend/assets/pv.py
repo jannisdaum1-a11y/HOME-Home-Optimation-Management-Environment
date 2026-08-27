@@ -3,6 +3,7 @@ from ..data_collection.weather import Weather
 from ..optimization.optimizer import Optimizer
 
 from ..data_collection.config import get_config
+from ..data_collection.timeseries import TimeSeries
 from .asset import Asset
 
 from pyomo.environ import ConcreteModel, Var, NonNegativeReals
@@ -34,7 +35,7 @@ class PV(Asset):
         self.azimuth = azimuth
         self.performance_ratio = performance_ratio
         self.temperature_coefficient = temperature_coefficient
-        self.weather = Weather(self.lat, self.lon, tilt=tilt, azimuth=azimuth)
+        self.weather = TimeSeries(Weather(self.lat, self.lon, tilt=tilt, azimuth=azimuth)).data
         self.pv_output = self.calculate_pv_output()
 
         super().__init__(expandable,rated_power*spec_capex, lifetime, wacc) 

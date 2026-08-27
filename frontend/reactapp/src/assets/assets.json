@@ -42,7 +42,7 @@
         "name": "pv",
         "image": "src/assets/PV.png",
         "rated_power": 400,
-        "expandable" : null,
+        "expandable" : true,
         "Location / Position":
         {
             "lat" : null,
