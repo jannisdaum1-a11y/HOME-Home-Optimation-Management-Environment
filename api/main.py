@@ -11,6 +11,7 @@ from backend.data_collection.prices import SpotMarktPrices, ConstPrice
 
 from backend.assets.pv import PV
 from backend.assets.battery import Battery
+from backend.assets.gridconnection import GridConnection
 from backend.assets.load import ConstantLoadProfile
 
 from backend.optimization.optimizer import Optimizer
@@ -48,12 +49,16 @@ def calculate(payload: CalculationPayload) -> dict:
     if not "config" in classtypes: ValueError("No Config found")
 
 
+
     for object in objects:
         #Unpack sub-dictionaries
         object = unpack_subdicts(object)
         class_type = object.get("class", False)
         if class_type == "config":
             set_config(Config(**object))
+            # Define Model
+            prices = SpotMarktPrices("data\\spotmarktpreise.csv")
+            export_prices = ConstPrice(const_price=0.08)
         elif class_type == "pv":
             PV(**object)
         elif class_type == "battery":
@@ -61,14 +66,12 @@ def calculate(payload: CalculationPayload) -> dict:
         elif class_type =="load":
             ConstantLoadProfile(constant_load=300)
         elif class_type == "grid_connection":
-            pass
+            GridConnection(import_prices=prices, export_prices=export_prices, **object)
 
-    # Define Model
-    prices = SpotMarktPrices("data\\spotmarktpreise.csv")
-    export_prices = ConstPrice(const_price=0.08)
 
-    optimizer = Optimizer(import_prices=prices, export_prices=export_prices)
+    optimizer = Optimizer()
     results = optimizer.get_results()
+    Optimizer.objects.clear()
     return {
         "objective_value": optimizer.objective_value,
         "results": json.loads(results.to_json(orient="split", date_format="iso")),

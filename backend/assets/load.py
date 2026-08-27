@@ -37,6 +37,9 @@ class LoadProfile(Asset):
         model.power_balance_rhs_terms.append(getattr(model, f"p_{self.name}"))
         return
 
+    def expand_objective(self, model:ConcreteModel):
+        return
+
 
     def register_load(self):
         LoadProfile.loads[self.name] = self

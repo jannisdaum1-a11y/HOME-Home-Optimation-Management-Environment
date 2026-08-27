@@ -2,6 +2,7 @@ import pandas as pd
 import requests
 
 from .config import get_config
+from ..data_collection.timeseries import TimeSeries
 
 url = "https://historical-forecast-api.open-meteo.com/v1/forecast"
 
@@ -55,5 +56,5 @@ class Weather():
 
         # Resample to 15-minute intervals and interpolate missing values
         df = df.resample("15min").interpolate()
-        return df
+        return TimeSeries(df).data
     

@@ -9,10 +9,7 @@ from ..data_collection.prices import Prices
 class Optimizer():
     objects = {}
 
-    def __init__(self, import_prices: Prices = None, export_prices: Prices = None):
-        self.import_prices = import_prices
-        self.export_prices = export_prices
-
+    def __init__(self):
         self.model = pyo.ConcreteModel()
 
         self.implementation()
@@ -33,63 +30,24 @@ class Optimizer():
         self.model.t = pyo.Set(initialize=pd.date_range(start=active_config.start_date, end=active_config.end_date - active_config.timestep, freq=active_config.timestep))
 
         # Variables
-        self.model.p_import = pyo.Var(self.model.t, domain=pyo.NonNegativeReals, bounds=(0, active_config.p_grid_max), initialize=0)
-        self.model.p_export = pyo.Var(self.model.t, domain=pyo.NonNegativeReals, bounds=(0, abs(active_config.p_grid_min)), initialize=0)
-
+        ## Energy not served
         self.model.ens = pyo.Var(self.model.t, domain=pyo.NonNegativeReals, bounds=(0, np.inf), initialize=0)
+        ## Dump Energy
+        self.model.dump = pyo.Var(self.model.t, domain=pyo.NonNegativeReals, bounds=(0, np.inf), initialize=0)
 
-        if get_config().formulate_binary:
-            # Avoid simultaneously import/export with binary variable
-            self.model.b_export = pyo.Var(self.model.t, domain=pyo.Binary, initialize=False)
-            def import_limit(model, t):
-                return model.p_import[t] <= abs(active_config.p_grid_max)*(1-model.b_export[t])
-            def export_limit(model, t):
-                return model.p_export[t] <= abs(active_config.p_grid_min)*model.b_export[t]
-        else:
-            # Avoid simultaneously import/export with export restriction in case of negative import prices
-            def import_limit(model, t):
-                return model.p_import[t] <= abs(active_config.p_grid_max)
-            def export_limit(model, t):
-                if self.import_prices.prices_t[t]>=0:
-                    return model.p_export[t] <=abs(active_config.p_grid_min)
-                else:
-                    return model.p_export[t] == 0
-        self.model.import_constraint = pyo.Constraint(
-            self.model.t,
-            rule=lambda model, t: import_limit(model, t)
-        )
-        self.model.export_constraint = pyo.Constraint(
-            self.model.t,
-            rule=lambda model, t: export_limit(model, t)
-        )
-        
 
         # Power Balance
-        self.model.power_balance_lhs_terms = [self.model.p_import, self.model.ens] #Positive Power (Generation)
-        self.model.power_balance_rhs_terms = [self.model.p_export] #Negative Power (Load)
+        self.model.power_balance_lhs_terms = [self.model.ens] #Positive Power (Generation)
+        self.model.power_balance_rhs_terms = [self.model.dump] #Negative Power (Load)
 
         for obj in Optimizer.objects.values():
             obj.create_variables(self.model)
             obj.create_constraints(self.model)
 
-    def capacity_optimization(self):
-
-        # Add cost term for capacity expansion
-        annualized_invest = 0
-        for obj in Optimizer.objects.values():
-            if obj.expandable:
-                annualized_invest += obj.annualized_invest(self.model)
-
-        return annualized_invest
-            
-                    
 
 
     def objective_function(self):
-        if self.import_prices is None or self.export_prices is None:
-            raise ValueError("Import and export prices must be provided for the objective function.")
-
-
+       
         self.model.power_balance_constraint = pyo.Constraint(
             self.model.t,
             rule=lambda model, t: sum(term[t] for term in model.power_balance_lhs_terms) - sum(term[t] for term in model.power_balance_rhs_terms) == 0,
@@ -104,14 +62,15 @@ class Optimizer():
             # TimeFactor considers the interevall-length
             expr=sum(
                 time_factor*(
-                    self.import_prices.prices_t[t]/1000 * self.model.p_import[t]
-                    - self.export_prices.prices_t[t]/1000 * self.model.p_export[t]
-                    +self.model.ens[t]*ens_cost
+                    (self.model.ens[t]+self.model.dump[t])*ens_cost
                     )
-                for t in self.model.t)
-                + self.capacity_optimization(),
+                for t in self.model.t),
             sense=pyo.minimize
         )
+
+        for obj in Optimizer.objects.values():
+            obj.expand_objective(self.model)
+            
 
     def get_results(self):
 

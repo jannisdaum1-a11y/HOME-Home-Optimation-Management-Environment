@@ -19,7 +19,7 @@ class TimeSeries():
                 data.resample(rule=timestep).interpolate()
 
         #Genererate identical indices
-        indexes = pd.date_range(start=start_time, end=end_time,freq=timestep)
+        indexes = pd.date_range(start=start_time, end=end_time-timestep,freq=timestep)
 
         if len(data)<len(indexes):
             Warning("Timeseries length does not match, try to expand")

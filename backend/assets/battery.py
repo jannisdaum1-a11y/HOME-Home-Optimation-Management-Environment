@@ -129,6 +129,15 @@ class Battery(Asset):
 
         return
 
+    def expand_objective(self, model:ConcreteModel):
+        if self.expandable:
+            annual_capex = self.spec_capex * getattr(model, f"e_capacity_{self.name}") * self.annuity_factor
+        else:
+            annual_capex = self.spec_capex * self.capacity
+
+        model.obj += annual_capex
+        return
+
     def annualized_invest(self, model):
         if self.expandable:
             annuity_factor = self.annuity_factor()

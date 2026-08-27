@@ -6,7 +6,7 @@ from ..data_collection.config import get_config
 from ..data_collection.timeseries import TimeSeries
 from .asset import Asset
 
-from pyomo.environ import ConcreteModel, Var, NonNegativeReals
+from pyomo.environ import ConcreteModel, Var, NonNegativeReals, Param, Constraint
 
 class PV(Asset):
     counter = 0
@@ -23,38 +23,83 @@ class PV(Asset):
                  lifetime=False,
                  wacc=False,
                  expandable=False,
+                 power_limit=1000000,
                 **kwargs
                  ):
         active_config = get_config()
         self.name = f"{name}_{PV.counter}"
         PV.counter += 1
         self.rated_power = rated_power
+        self.capacity = rated_power
         self.lat = lat if lat is not None else getattr(active_config, "lat", None)
         self.lon = lon if lon is not None else getattr(active_config, "lon", None)
         self.tilt = tilt
         self.azimuth = azimuth
         self.performance_ratio = performance_ratio
         self.temperature_coefficient = temperature_coefficient
-        self.weather = TimeSeries(Weather(self.lat, self.lon, tilt=tilt, azimuth=azimuth)).data
-        self.pv_output = self.calculate_pv_output()
+        self.weather = Weather(self.lat, self.lon, tilt=tilt, azimuth=azimuth)
+
+        self.expandable = expandable
+        self.power_limit = power_limit
+        self.spec_capex = spec_capex
 
         super().__init__(expandable,rated_power*spec_capex, lifetime, wacc) 
         Optimizer.register_object(self)
         
 
-    def calculate_pv_output(self):
+    def calculate_pv_output_factor(self):
         weather_data = self.weather.fetch_weather_data()
-        pv_output = self.rated_power * self.performance_ratio * (weather_data["specific_radiation"] / 1000) * (1 + self.temperature_coefficient * (weather_data["temperature"] - 25))
-        return pv_output
+        pv_output_factor = self.performance_ratio * (weather_data["specific_radiation"] / 1000) * (1 + self.temperature_coefficient * (weather_data["temperature"] - 25))
+        return pv_output_factor
 
-    def create_variables(self, model:ConcreteModel):
-        def _p_bounds(model, t):
-            return (0, self.pv_output[t])
-        p_pv = Var(model.t, domain=NonNegativeReals, bounds=_p_bounds, initialize=0)
+    def create_variables(self, model: ConcreteModel):
+
+        pv_output_factor = self.calculate_pv_output_factor()
+        output_factor = Param(
+            model.t,
+            initialize=lambda _, t: float(pv_output_factor.loc[t]),
+            mutable=False,
+        )
+        setattr(model, f"pv_output_factor_{self.name}", output_factor)
+
+        if self.expandable:
+            capacity = Var(
+                domain=NonNegativeReals,
+                bounds=(0, self.power_limit)
+            )
+        else:
+            capacity = Param(
+                initialize=self.capacity,
+                mutable=False
+            )
+
+        setattr(model, f"Optimized_{self.name}", capacity)
+
+        p_pv = Var(
+            model.t,
+            domain=NonNegativeReals,
+            initialize=0
+        )
+
         setattr(model, f"p_{self.name}", p_pv)
+
+        def pv_limit_rule(model, t):
+            return p_pv[t] <= capacity * output_factor[t]
+
+        model.add_component(
+            f"pv_limit_{self.name}",
+            Constraint(model.t, rule=pv_limit_rule)
+        )
 
     def create_constraints(self, model:ConcreteModel):
         model.power_balance_lhs_terms.append(getattr(model, f"p_{self.name}"))
+        return
+
+    def expand_objective(self, model:ConcreteModel):
+        if self.expandable:
+            model.obj +=  self.spec_capex * getattr(model, f"Optimized_{self.name}") * self.annuity_factor()
+        else:
+            model.obj += self.spec_capex * self.capacity * self.annuity_factor()
         return
 
 

@@ -6,7 +6,7 @@
         "Time-Settings":
         {
             "start_date" : "30.09.2025 22.15",
-            "end_date" : "30.06.2026 22.00",
+            "end_date" : "02.10.2025 22.00",
             "timestep" : 15
         },
         "Location":
@@ -14,6 +14,8 @@
             "lat" : 51.0,
             "lon" : 10.0
         },
+
+        "ens_cost": 1000000000,
         
 
         "p_grid_max" : 10000, 
@@ -24,7 +26,7 @@
         },
         "Solver-Settings":
         {
-            "formulate_binary" : false
+            "formulate_binary" : true
         }
     },
     "GridConnection":{
@@ -42,7 +44,8 @@
         "name": "pv",
         "image": "src/assets/PV.png",
         "rated_power": 400,
-        "expandable" : true,
+        "expandable" : false,
+        "power_limit": 1000000000,
         "Location / Position":
         {
             "lat" : null,

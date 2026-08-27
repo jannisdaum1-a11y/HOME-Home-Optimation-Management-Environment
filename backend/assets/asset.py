@@ -33,6 +33,13 @@ class Asset:
         """
         return
 
+    @abstractmethod
+    def expand_objective(self, model:ConcreteModel):
+        """
+        Add cost terms for objective function
+        """
+        return
+
     def annuity_factor(self):
         """Return the annualized Factor using the capital recovery factor."""
         if self.lifetime <= 0:
