@@ -48,7 +48,10 @@ class Asset:
             return 1 / self.lifetime
 
         growth_factor = (1 + self.wacc) ** self.lifetime
-        return  self.wacc * growth_factor / (growth_factor - 1)
+        startdate = get_config().start_date
+        enddate = get_config().end_date
+        year_share = (enddate-startdate).total_seconds() / (365*24*60*60)
+        return  self.wacc * growth_factor / (growth_factor - 1) *year_share
 
     def annualized_invest(self, model):
         return 0
