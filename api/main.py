@@ -1,5 +1,6 @@
 from datetime import datetime
 import json
+from pathlib import Path
 from typing import Any, Optional
 
 from fastapi import FastAPI, HTTPException
@@ -24,6 +25,7 @@ class CalculationPayload(BaseModel):
 
 
 app = FastAPI(title="HOME Optimization API", version="1.0.0")
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
 app.add_middleware(
     CORSMiddleware,
@@ -57,7 +59,7 @@ def calculate(payload: CalculationPayload) -> dict:
         if class_type == "config":
             set_config(Config(**object))
             # Define Model
-            prices = SpotMarktPrices("data\\spotmarktpreise.csv")
+            prices = SpotMarktPrices(DATA_DIR / "spotmarktpreise.csv")
             export_prices = ConstPrice(const_price=0.08)
         elif class_type == "pv":
             PV(**object)

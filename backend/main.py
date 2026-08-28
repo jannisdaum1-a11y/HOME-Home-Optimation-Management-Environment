@@ -1,4 +1,5 @@
 from assets.load import ConstantLoadProfile
+from pathlib import Path
 from assets.pv import PV
 from assets.battery import Battery
 from data_collection.config import Config, set_config
@@ -16,7 +17,7 @@ def run() -> None:
         )
     )
 
-    prices = SpotMarktPrices("data\\spotmarktpreise.csv")
+    prices = SpotMarktPrices(Path(__file__).resolve().parent.parent / "data" / "spotmarktpreise.csv")
     export_prices = ConstPrice(const_price=0.08)
 
     PV(rated_power=1000, tilt=30, azimuth=180, temperature_coefficient=-0.005)

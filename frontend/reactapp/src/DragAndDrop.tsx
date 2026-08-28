@@ -7,7 +7,7 @@ Object.keys(assets).forEach(element => {
     counter[element]=0;
 });
 type Asset = {
-    image: string;
+    image?: string;
     [key: string]: unknown;
 };
 
@@ -15,7 +15,7 @@ type Asset = {
 function DisplayObject({object}: {object:Asset}) {
     return (
         <>
-        <img src={object.image} alt={String(object.name)}></img>
+        <img src={object.image ?? ""} alt={String(object.name)}></img>
         <p>{String(object.name)}</p>
         </>
     )

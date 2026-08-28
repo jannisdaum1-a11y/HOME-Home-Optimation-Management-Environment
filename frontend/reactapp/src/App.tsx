@@ -24,6 +24,8 @@ type CalculationResult = {
     };
 };
 
+const apiUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:8000';
+
 function App() {
     const [objects, setObjects] = useState<Asset[]>([{...assets.Config}]);
     const [selectedObject, setSelectedObject] = useState<Asset|null>(objects[0]??null)
@@ -38,7 +40,7 @@ function App() {
         setCalculationError(null);
 
         try {
-            const response = await fetch('http://localhost:8000/calculate', {
+            const response = await fetch(`${apiUrl}/calculate`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({objects}),

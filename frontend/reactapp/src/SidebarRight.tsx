@@ -2,7 +2,7 @@ import {useState} from 'react';
 import './SidebarRight.css';
 
 type Asset = {
-    image: string;
+    image?: string;
     [key: string]: unknown;
 };
 

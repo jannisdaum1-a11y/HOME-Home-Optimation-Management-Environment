@@ -5,7 +5,7 @@ import assets from './assets/assets.json'
 const excludeAssets: string[] = ['Config', "EV"];
 
 type AssetData = {
-    image: string | null;
+    image?: string | null;
     [key: string]: unknown;
 };
 type AssetIconProps = {
