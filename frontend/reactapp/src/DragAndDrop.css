@@ -9,6 +9,7 @@
     min-height: 100%;
     padding: 28px;
     overflow: auto;
+    touch-action: none;
     border: 1px dashed #abc9c2;
     border-radius: 12px;
     background: linear-gradient(rgba(8, 127, 120, 0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(8, 127, 120, 0.035) 1px, transparent 1px), var(--panel);

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import './App.css'
 
 import SidebarLeft from './SidebarLeft'
@@ -26,6 +26,41 @@ type CalculationResult = {
 
 const apiUrl = (import.meta.env.VITE_API_URL ?? 'http://localhost:8000').replace(/\/$/, '');
 
+function isDictionary(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function findDefaultValue(defaults: Record<string, unknown>, key: string): unknown {
+    if (key in defaults && !isDictionary(defaults[key])) {
+        return defaults[key];
+    }
+
+    for (const value of Object.values(defaults)) {
+        if (isDictionary(value)) {
+            const defaultValue = findDefaultValue(value, key);
+            if (defaultValue !== undefined) return defaultValue;
+        }
+    }
+
+    return undefined;
+}
+
+function applyDefaults(asset: Record<string, unknown>, defaults: Record<string, unknown>): Record<string, unknown> {
+    const result = structuredClone(asset);
+    for (const [key, value] of Object.entries(result)) {
+        if (isDictionary(value)) {
+            result[key] = applyDefaults(value, defaults);
+            continue;
+        }
+
+        const defaultValue = findDefaultValue(defaults, key);
+        if ((value === null || value === undefined) && defaultValue !== undefined) {
+            result[key] = structuredClone(defaultValue);
+        }
+    }
+    return result;
+}
+
 function App() {
     const [objects, setObjects] = useState<Asset[]>([{...assets.Config}]);
     const [selectedObject, setSelectedObject] = useState<Asset|null>(objects[0]??null)
@@ -34,6 +69,28 @@ function App() {
     const [calculationResult, setCalculationResult] = useState<CalculationResult | null>(null);
     const [isCalculating, setIsCalculating] = useState(false);
     const [calculationError, setCalculationError] = useState<string | null>(null);
+    const [draggedAsset, setDraggedAsset] = useState<string | null>(null);
+    const assetCounters = useRef<Record<string, number>>({});
+
+    function addAsset(assetName: string) {
+        if (!(assetName in assets)) return;
+
+        const asset = applyDefaults(
+            structuredClone(assets[assetName as keyof typeof assets]) as Record<string, unknown>,
+            objects[0] as Record<string, unknown>,
+        );
+        const count = assetCounters.current[assetName] ?? 0;
+        assetCounters.current[assetName] = count + 1;
+        asset.name = `${String(asset.name)}_${count}`;
+
+        setObjects(previous => [...previous, asset as Asset]);
+        setSelectedObject(asset as Asset);
+    }
+
+    function finishPointerDrop() {
+        if (draggedAsset) addAsset(draggedAsset);
+        setDraggedAsset(null);
+    }
 
     async function startCalculation() {
         setIsCalculating(true);
@@ -95,7 +152,7 @@ function App() {
         <div className={activeTab === 'results' ? 'MainContent results-mode' : 'MainContent'}>
         {activeTab === 'configuration' && (
             <aside>
-                <SidebarLeft></SidebarLeft>
+                <SidebarLeft onPointerStart={setDraggedAsset}></SidebarLeft>
             </aside>
         )}
         
@@ -108,6 +165,8 @@ function App() {
                         objects={objects}
                         setObjects={setObjects}
                         setSelectedObject={setSelectedObject}
+                        draggedAsset={draggedAsset}
+                        onPointerDrop={finishPointerDrop}
                     ></DragAndDrop>
                 ) : (
                     <Results
