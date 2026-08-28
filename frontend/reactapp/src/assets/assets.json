@@ -23,7 +23,7 @@
         },
         "Solver-Settings":
         {
-            "formulate_binary" : true
+            "formulate_binary" : false
         }
     },
     "GridConnection":{
