@@ -41,7 +41,6 @@
     border-radius: 8px;
     color: var(--muted);
     cursor: grab;
-    touch-action: none;
     transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
 }
 
@@ -54,11 +53,6 @@
 
 .AssetIcon:active {
     cursor: grabbing;
-}
-
-.AssetIcon:active {
-    border-color: var(--accent);
-    background: var(--accent-soft);
 }
 
 .AssetIcon img {

@@ -10,33 +10,25 @@ type AssetData = {
 };
 type AssetIconProps = {
     name: string,
-    data: AssetData,
-    onPointerStart: (name: string) => void,
+    data: AssetData
 }
 
-function AssetIcon({name, data, onPointerStart}: AssetIconProps){
+function AssetIcon({name, data}: AssetIconProps){
     const image_path = data.image;
     return (
-        <div className='AssetIcon' key={name}
-        onPointerDown={(event) => {
-            event.preventDefault();
-            onPointerStart(name);
-        }}>
+        <div className='AssetIcon' key={name} 
+        draggable onDragStart={(e) => e.dataTransfer.setData("asset", name)}>
             <img src={image_path ?? ""} alt={name} draggable={false}/>
             <p>{name}</p>
         </div>
     )
 }
-type SidebarLeftProps = {
-    onPointerStart: (name: string) => void,
-};
-
-function SidebarLeft({onPointerStart}: SidebarLeftProps) {
+function SidebarLeft() {
     return (
         <div className="SideBarLeft">
             {Object.entries(assets).map(([name, data]) => (
                 !excludeAssets.includes(name) &&
-                <AssetIcon name={name} data={data} onPointerStart={onPointerStart}></AssetIcon>
+                <AssetIcon name={name} data={data}></AssetIcon>
             ))}
         </div>
     );
