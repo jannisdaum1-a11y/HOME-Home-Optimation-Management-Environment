@@ -25,46 +25,6 @@ type CalculationResult = {
 };
 
 const apiUrl = (import.meta.env.VITE_API_URL ?? 'http://localhost:8000').replace(/\/$/, '');
-const assetCounters: Record<string, number> = {};
-
-function isDictionary(value: unknown): value is Record<string, unknown> {
-    return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
-
-function findDefaultValue(defaults: Record<string, unknown>, key: string): unknown {
-    if (key in defaults && !isDictionary(defaults[key])) {
-        return defaults[key];
-    }
-
-    for (const value of Object.values(defaults)) {
-        if (isDictionary(value)) {
-            const defaultValue = findDefaultValue(value, key);
-            if (defaultValue !== undefined) {
-                return defaultValue;
-            }
-        }
-    }
-
-    return undefined;
-}
-
-function applyDefaults(value: Record<string, unknown>, defaults: Record<string, unknown>): Record<string, unknown> {
-    const result = structuredClone(value);
-
-    for (const [key, entry] of Object.entries(result)) {
-        if (isDictionary(entry)) {
-            result[key] = applyDefaults(entry, defaults);
-            continue;
-        }
-
-        const defaultValue = findDefaultValue(defaults, key);
-        if ((entry === null || entry === undefined) && defaultValue !== undefined) {
-            result[key] = structuredClone(defaultValue);
-        }
-    }
-
-    return result;
-}
 
 function App() {
     const [objects, setObjects] = useState<Asset[]>([{...assets.Config}]);
@@ -74,23 +34,6 @@ function App() {
     const [calculationResult, setCalculationResult] = useState<CalculationResult | null>(null);
     const [isCalculating, setIsCalculating] = useState(false);
     const [calculationError, setCalculationError] = useState<string | null>(null);
-
-    function addAsset(assetName: string) {
-        if (!(assetName in assets)) {
-            return;
-        }
-
-        const asset = applyDefaults(
-            structuredClone(assets[assetName as keyof typeof assets]) as Record<string, unknown>,
-            objects[0] as Record<string, unknown>,
-        );
-        const count = assetCounters[assetName] ?? 0;
-        assetCounters[assetName] = count + 1;
-        asset.name = `${String(asset.name)}_${count}`;
-
-        setObjects(previous => [...previous, asset as Asset]);
-        setSelectedObject(asset as Asset);
-    }
 
     async function startCalculation() {
         setIsCalculating(true);
@@ -152,7 +95,7 @@ function App() {
         <div className={activeTab === 'results' ? 'MainContent results-mode' : 'MainContent'}>
         {activeTab === 'configuration' && (
             <aside>
-                <SidebarLeft onAddAsset={addAsset}></SidebarLeft>
+                <SidebarLeft></SidebarLeft>
             </aside>
         )}
         

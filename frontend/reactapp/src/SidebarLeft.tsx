@@ -10,31 +10,25 @@ type AssetData = {
 };
 type AssetIconProps = {
     name: string,
-    data: AssetData,
-    onAddAsset: (name: string) => void,
+    data: AssetData
 }
 
-function AssetIcon({name, data, onAddAsset}: AssetIconProps){
+function AssetIcon({name, data}: AssetIconProps){
     const image_path = data.image;
     return (
         <div className='AssetIcon' key={name} 
         draggable onDragStart={(e) => e.dataTransfer.setData("asset", name)}>
             <img src={image_path ?? ""} alt={name} draggable={false}/>
             <p>{name}</p>
-            <button type="button" onClick={() => onAddAsset(name)}>Hinzufügen</button>
         </div>
     )
 }
-type SidebarLeftProps = {
-    onAddAsset: (name: string) => void,
-};
-
-function SidebarLeft({onAddAsset}: SidebarLeftProps) {
+function SidebarLeft() {
     return (
         <div className="SideBarLeft">
             {Object.entries(assets).map(([name, data]) => (
                 !excludeAssets.includes(name) &&
-                <AssetIcon name={name} data={data} onAddAsset={onAddAsset}></AssetIcon>
+                <AssetIcon name={name} data={data}></AssetIcon>
             ))}
         </div>
     );
