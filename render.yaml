@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: home-optimization-api
+    runtime: python
+    buildCommand: pip install -r api/requirements.txt
+    startCommand: uvicorn api.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+
+  - type: web
+    name: home-optimization-frontend
+    runtime: static
+    buildCommand: cd frontend/reactapp && npm ci && npm run build
+    staticPublishPath: frontend/reactapp/dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: home-optimization-api
+          envVarKey: RENDER_EXTERNAL_URL
