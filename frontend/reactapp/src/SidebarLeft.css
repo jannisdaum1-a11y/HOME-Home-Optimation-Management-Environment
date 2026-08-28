@@ -67,6 +67,19 @@
     font-weight: 700;
 }
 
+.AssetIcon button {
+    display: none;
+    margin-left: auto;
+    padding: 6px 8px;
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    color: var(--accent);
+    background: var(--panel);
+    cursor: pointer;
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
 @media (max-width: 640px) {
     .SideBarLeft {
         display: grid;
@@ -105,6 +118,10 @@
 
     .AssetIcon p {
         font-size: 0.78rem;
+    }
+
+    .AssetIcon button {
+        display: block;
     }
 }
 
