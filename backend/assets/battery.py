@@ -15,8 +15,8 @@ class Battery(Asset):
                  initial_rel_soc=0.5,
                  min_rel_soc=0,
                  max_rel_soc=100,
-                 charge_efficiency=1,
-                 discharge_efficiency=1,
+                 charge_efficiency=100,
+                 discharge_efficiency=100,
                  name="Battery",
                  spec_capex=1000,
                  lifetime=False,
@@ -35,8 +35,8 @@ class Battery(Asset):
         self.min_rel_soc = min_rel_soc/100 #%
         self.max_rel_soc = max_rel_soc/100 #%
         self.soc_profile = pd.Series(dtype=float)
-        self.charge_efficiency = charge_efficiency
-        self.discharge_efficiency = discharge_efficiency 
+        self.charge_efficiency = charge_efficiency / 100
+        self.discharge_efficiency = discharge_efficiency / 100
 
         self.expandable = expandable
         self.capacity_limit = capacity_limit

@@ -1,5 +1,6 @@
 from datetime import datetime
 import json
+import re
 from pathlib import Path
 from typing import Any, Optional
 
@@ -90,5 +91,6 @@ def unpack_subdicts(data: dict, result_dict:dict = {}):
         if isinstance(value, dict):
             unpack_subdicts(value, result_dict)
         else:
-            result_dict[key] = value
+            clear_key = re.sub(r"\s*\[.*?\]", "", key) #clear units from gui
+            result_dict[clear_key] = value
     return result_dict

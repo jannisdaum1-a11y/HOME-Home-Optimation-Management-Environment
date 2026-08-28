@@ -7,7 +7,7 @@
         {
             "start_date" : "30.09.2025 22.15",
             "end_date" : "02.10.2025 22.00",
-            "timestep" : 15
+            "timestep [m]" : 15
         },
         "Location":
         {
@@ -19,7 +19,7 @@
         
 
         "Economic-Settings" : {
-            "wacc" : 0
+            "wacc [%]" : 0
         },
         "Solver-Settings":
         {
@@ -30,65 +30,65 @@
         "class": "grid_connection",
         "name": "grid_connection",
         "image": "/assets/GridConnection.png",
-        "p_grid_min": -800,
-        "p_grid_max": 11000
+        "p_grid_min [W]": -800,
+        "p_grid_max [W]": 11000
     },
     "ConstantLoad":{
         "class": "const_load",
         "name": "const_load",
         "image": "/assets/Load.png",
-        "constant_load": 300
+        "constant_load [P]": 300
     },
     "StandardLoadProfile":{
         "class": "std_load",
         "name": "std_load",
         "image": "/assets/Load.png",
-        "normalized_load": 1000
+        "normalized_load [P]": 1000
     },
     "PV": {
         "class": "pv",
         "name": "pv",
         "image": "/assets/PV.png",
-        "rated_power": 400,
+        "rated_power [P]": 400,
         "expandable" : false,
-        "power_limit": 1000000000,
+        "power_limit [P]": 1000000000,
         "Location / Position":
         {
             "lat" : null,
             "lon" : null,
-            "tilt" : 30.0,
-            "azimuth" : 180.0
+            "tilt [*]" : 30.0,
+            "azimuth [*]" : 180.0
         },
         "Technology Settings":{
-            "performance_ratio" : 1,
+            "performance_ratio [%]" : 100,
             "temperature_coefficient" : -0.005
         },
         "Ecinomic Settings":{
-            "spec_capex" : 1000,
-            "lifetime" : 25,
-            "wacc" : 5
+            "spec_capex [€/Wp]" : 0.5,
+            "lifetime [years]" : 25,
+            "wacc[%]" : 5
         }
     },
     "Battery": {
         "class": "battery",
         "name": "battery",
         "image": "/assets/Battery.png",
-        "capacity" : 1000,
+        "capacity [Wh]" : 1000,
         "expandable" : false,
-        "capacity_limit" : 10000,
+        "capacity_limit [Wh]" : 10000,
         "Technology Settings": {
-            "max_charge_rate" :1000,
-            "max_discharge_rate" :1000,
-            "min_rel_soc": 20,
-            "max_rel_soc": 100,
-            "initial_rel_soc" : 0.5,
-            "charge_efficiency" : 1,
-            "discharge_efficiency" : 1
+            "max_charge_rate [W]" :1000,
+            "max_discharge_rate [W]" :1000,
+            "min_rel_soc [%]": 20,
+            "max_rel_soc [%]": 100,
+            "initial_rel_soc [%]" : 0.5,
+            "charge_efficiency [%]" : 100,
+            "discharge_efficiency [%]" : 100
         },
         "Economic Settings":{
-            "spec_capex" : 1000,
-            "lifetime" : 25,
-            "wacc" : 5
+            "spec_capex [€/Wh]" : 0.35,
+            "lifetime [years]" : 25,
+            "wacc [%]" : 5
         }
     },
     "EV": {
