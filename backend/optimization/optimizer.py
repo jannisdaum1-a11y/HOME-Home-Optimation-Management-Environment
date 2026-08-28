@@ -75,19 +75,19 @@ class Optimizer():
     def get_results(self):
 
         results = {}
-
-        for var in self.model.component_objects(
-            pyo.Var,
-            active=True
-        ):
-            if var.is_indexed():
-                results[var.name] = [
-                    pyo.value(var[t])
-                    for t in self.model.t
-                ]
-            else:
-                value = pyo.value(var)
-                results[var.name] = [value] * len(self.model.t)
+        for component_type in (pyo.Var, pyo.Param):
+            for var in self.model.component_objects(
+               component_type,
+                active=True
+            ):
+                if var.is_indexed():
+                    results[var.name] = [
+                        pyo.value(var[t])
+                        for t in self.model.t
+                    ]
+                else:
+                    value = pyo.value(var)
+                    results[var.name] = [value] * len(self.model.t)
 
         results_df = pd.DataFrame(
             results,

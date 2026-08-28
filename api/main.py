@@ -12,7 +12,7 @@ from backend.data_collection.prices import SpotMarktPrices, ConstPrice
 from backend.assets.pv import PV
 from backend.assets.battery import Battery
 from backend.assets.gridconnection import GridConnection
-from backend.assets.load import ConstantLoadProfile
+from backend.assets.load import ConstantLoadProfile, StandardLoadProfile
 
 from backend.optimization.optimizer import Optimizer
 
@@ -63,8 +63,10 @@ def calculate(payload: CalculationPayload) -> dict:
             PV(**object)
         elif class_type == "battery":
             Battery(**object)
-        elif class_type =="load":
-            ConstantLoadProfile(constant_load=300)
+        elif class_type =="const_load":
+            ConstantLoadProfile(**object)
+        elif class_type == "std_load":
+            StandardLoadProfile(**object)
         elif class_type == "grid_connection":
             GridConnection(import_prices=prices, export_prices=export_prices, **object)
 

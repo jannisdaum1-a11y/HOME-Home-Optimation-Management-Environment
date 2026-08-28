@@ -33,10 +33,17 @@
         "p_grid_min": -800,
         "p_grid_max": 11000
     },
-    "Load":{
-        "class": "load",
-        "name": "load",
-        "image": "src/assets/Load.png"
+    "ConstantLoad":{
+        "class": "const_load",
+        "name": "const_load",
+        "image": "src/assets/Load.png",
+        "constant_load": 300
+    },
+    "StandardLoadProfile":{
+        "class": "std_load",
+        "name": "std_load",
+        "image": "src/assets/Load.png",
+        "normalized_load": 1000
     },
     "PV": {
         "class": "pv",

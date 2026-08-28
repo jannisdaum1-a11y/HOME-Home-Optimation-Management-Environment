@@ -83,6 +83,7 @@ function DragAndDrop({objects, setObjects, setSelectedObject}: DragAndDropProps)
 
     data.name = data.name + "_" + counter[object]++;
     setObjects(prev => [...prev, data]);
+    setSelectedObject(data)
     console.log(objects);
     }
 
