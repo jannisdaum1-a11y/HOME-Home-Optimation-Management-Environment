@@ -29,26 +29,26 @@
     "GridConnection":{
         "class": "grid_connection",
         "name": "grid_connection",
-        "image": "src/assets/GridConnection.png",
+        "image": "/assets/GridConnection.png",
         "p_grid_min": -800,
         "p_grid_max": 11000
     },
     "ConstantLoad":{
         "class": "const_load",
         "name": "const_load",
-        "image": "src/assets/Load.png",
+        "image": "/assets/Load.png",
         "constant_load": 300
     },
     "StandardLoadProfile":{
         "class": "std_load",
         "name": "std_load",
-        "image": "src/assets/Load.png",
+        "image": "/assets/Load.png",
         "normalized_load": 1000
     },
     "PV": {
         "class": "pv",
         "name": "pv",
-        "image": "src/assets/PV.png",
+        "image": "/assets/PV.png",
         "rated_power": 400,
         "expandable" : false,
         "power_limit": 1000000000,
@@ -72,7 +72,7 @@
     "Battery": {
         "class": "battery",
         "name": "battery",
-        "image": "src/assets/Battery.png",
+        "image": "/assets/Battery.png",
         "capacity" : 1000,
         "expandable" : false,
         "capacity_limit" : 10000,
@@ -94,7 +94,7 @@
     "EV": {
         "class": "ev",
         "name": "ev",
-        "image": "src/assets/Eauto.png",
+        "image": "/assets/Eauto.png",
         "Capacity": 0,
         "expandable": false
     }
