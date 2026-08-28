@@ -2,15 +2,10 @@
 
 ## Projektstruktur
 
-Das Projekt ist jetzt in drei getrennte Bereiche aufgeteilt:
-
 - backend/: Python-Domainlogik und Optimierung
 - api/: FastAPI-Schnittstelle
 - frontend/: React-Frontend (Vite)
 
-Kompatibilitaet fuer bestehende Imports bleibt erhalten:
-
-- assets.*, data_collection.*, optimization.* funktionieren weiter ueber Wrapper im Root.
 
 ## Ordneruebersicht
 
