@@ -60,8 +60,9 @@ def calculate(payload: CalculationPayload) -> dict:
         if class_type == "config":
             set_config(Config(**object))
             # Define Model
-            prices = SpotMarktPrices(DATA_DIR / "spotmarktpreise.csv")
+            #prices = SpotMarktPrices(DATA_DIR / "spotmarktpreise.csv")
             export_prices = ConstPrice(const_price=0.08)
+            prices = ConstPrice(const_price=0.35)
         elif class_type == "pv":
             PV(**object)
         elif class_type == "battery":
