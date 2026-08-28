@@ -24,7 +24,7 @@ type AreaPlotProps = {
     Unit: string;
 };
 
-const negativeSeriesPattern = /_load|_charge|_export/i;
+const negativeSeriesPattern = /_load|_charge|_export|dump/i;
 
 function AreaPlot({CalculationResults, ColumnFilter, Unit}: AreaPlotProps) {
     if (!CalculationResults?.results) {

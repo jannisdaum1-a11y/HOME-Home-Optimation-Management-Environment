@@ -6,8 +6,7 @@ from ..data_collection.config import get_config
 class Asset:
 
     @abstractmethod
-    def __init__(self,expandable=False, capex=0, lifetime=0, wacc=0, **kwargs):
-        self.capex = capex
+    def __init__(self,expandable=False, lifetime=0, wacc=0, **kwargs):
         self.lifetime = lifetime
         self.expandable = expandable
 

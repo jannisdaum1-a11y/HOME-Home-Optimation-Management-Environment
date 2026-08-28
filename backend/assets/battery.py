@@ -13,6 +13,8 @@ class Battery(Asset):
                  max_charge_rate=1000,
                  max_discharge_rate=1000,
                  initial_rel_soc=0.5,
+                 min_rel_soc=0,
+                 max_rel_soc=100,
                  charge_efficiency=1,
                  discharge_efficiency=1,
                  name="Battery",
@@ -30,6 +32,8 @@ class Battery(Asset):
         self.max_charge_rate = max_charge_rate
         self.max_discharge_rate = max_discharge_rate
         self.initial_rel_soc = initial_rel_soc
+        self.min_rel_soc = min_rel_soc/100 #%
+        self.max_rel_soc = max_rel_soc/100 #%
         self.soc_profile = pd.Series(dtype=float)
         self.charge_efficiency = charge_efficiency
         self.discharge_efficiency = discharge_efficiency 
@@ -38,7 +42,7 @@ class Battery(Asset):
         self.capacity_limit = capacity_limit
         self.spec_capex = spec_capex
 
-        super().__init__(expandable,capacity*spec_capex, lifetime, wacc) 
+        super().__init__(expandable, lifetime, wacc) 
 
         Optimizer.register_object(self)
 
@@ -87,6 +91,19 @@ class Battery(Asset):
             )
         )
 
+        # Constrain minimum allowed SOC
+        if self.min_rel_soc:
+            def min_soc(model, t):
+                return getattr(model, f"soc_{self.name}")[t] >= self.min_rel_soc * getattr(model, f"e_capacity_{self.name}")
+            min_soc_cons = Constraint(model.t, rule=lambda model, t: min_soc(model, t))
+            setattr(model, f"min_soc_constraint_{self.name}", min_soc_cons)
+
+        if self.max_rel_soc:
+            def max_soc(model, t):
+                return getattr(model, f"soc_{self.name}")[t] <= self.max_rel_soc * getattr(model, f"e_capacity_{self.name}")
+            max_soc_cons = Constraint(model.t, rule=lambda model, t: max_soc(model, t))
+            setattr(model, f"max_soc_constraint_{self.name}", max_soc_cons)
+
         def state_of_charge_capacity(model, t):
             return getattr(model, f"soc_{self.name}")[t] <= getattr(
                 model, f"e_capacity_{self.name}"
@@ -131,9 +148,9 @@ class Battery(Asset):
 
     def expand_objective(self, model:ConcreteModel):
         if self.expandable:
-            annual_capex = self.spec_capex * getattr(model, f"e_capacity_{self.name}") * self.annuity_factor
+            annual_capex = self.spec_capex * getattr(model, f"e_capacity_{self.name}") * self.annuity_factor()
         else:
-            annual_capex = self.spec_capex * self.capacity
+            annual_capex = self.spec_capex * self.capacity * self.annuity_factor()
 
         model.obj += annual_capex
         return

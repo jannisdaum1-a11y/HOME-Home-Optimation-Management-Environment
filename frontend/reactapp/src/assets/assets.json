@@ -18,9 +18,6 @@
         "ens_cost": 1000000000,
         
 
-        "p_grid_max" : 10000, 
-        "p_grid_min" : -10000,
-
         "Economic-Settings" : {
             "wacc" : 0
         },
@@ -32,7 +29,9 @@
     "GridConnection":{
         "class": "grid_connection",
         "name": "grid_connection",
-        "image": "src/assets/GridConnection.png"
+        "image": "src/assets/GridConnection.png",
+        "p_grid_min": -800,
+        "p_grid_max": 11000
     },
     "Load":{
         "class": "load",
@@ -60,7 +59,7 @@
         "Ecinomic Settings":{
             "spec_capex" : 1000,
             "lifetime" : 25,
-            "wacc" : null
+            "wacc" : 5
         }
     },
     "Battery": {
@@ -73,14 +72,16 @@
         "Technology Settings": {
             "max_charge_rate" :1000,
             "max_discharge_rate" :1000,
+            "min_rel_soc": 20,
+            "max_rel_soc": 100,
             "initial_rel_soc" : 0.5,
             "charge_efficiency" : 1,
             "discharge_efficiency" : 1
         },
         "Economic Settings":{
             "spec_capex" : 1000,
-            "lifetime" : false,
-            "wacc" : false
+            "lifetime" : 25,
+            "wacc" : 5
         }
     },
     "EV": {

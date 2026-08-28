@@ -43,7 +43,7 @@ class PV(Asset):
         self.power_limit = power_limit
         self.spec_capex = spec_capex
 
-        super().__init__(expandable,rated_power*spec_capex, lifetime, wacc) 
+        super().__init__(expandable,lifetime, wacc) 
         Optimizer.register_object(self)
         
 

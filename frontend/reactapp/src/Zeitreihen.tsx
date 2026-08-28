@@ -27,7 +27,7 @@ function Zeitreihen({calculationResult}: ZeitreihenProps) {
     return (
         <>
             <h3>Power-Timeseries</h3>
-            <AreaPlot CalculationResults={calculationResult} ColumnFilter={/p_/i} Unit="W"></AreaPlot>
+            <AreaPlot CalculationResults={calculationResult} ColumnFilter={/p_|ens|dump/i} Unit="W"></AreaPlot>
             <h3>SOC-Timeseries</h3>
             <AreaPlot CalculationResults={calculationResult} ColumnFilter={/soc_/i} Unit="Wh"></AreaPlot>
             <div className="ResultTableHeader">
