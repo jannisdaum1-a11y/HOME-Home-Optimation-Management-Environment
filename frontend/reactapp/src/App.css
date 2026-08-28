@@ -198,24 +198,44 @@
 }
 
 @media (max-width: 640px) {
+    .AppShell {
+        min-height: 100dvh;
+        height: auto;
+        overflow: visible;
+        padding-top: max(10px, env(safe-area-inset-top));
+    }
+
     .MainContent {
         display: flex;
         flex-direction: column;
-        height: calc(100vh - 74px);
-        padding: 0 12px 12px;
+        height: auto;
+        min-height: 0;
+        gap: 12px;
+        padding: 0 10px max(10px, env(safe-area-inset-bottom));
+        overflow: visible;
     }
 
     .MainContent > aside:first-child,
     .MainContent > aside:last-child {
-        padding: 16px;
+        flex: none;
+        padding: 12px;
     }
 
-    .MainContent > aside {
-        max-height: 300px;
+    .MainContent > aside:first-child {
+        order: 0;
+        height: auto;
+        min-height: 126px;
+    }
+
+    .MainContent > aside:last-child {
+        order: 2;
+        min-height: 260px;
     }
 
     .Workspace {
-        min-height: 620px;
+        order: 1;
+        min-height: 52dvh;
+        height: auto;
         padding: 0;
     }
 
@@ -230,11 +250,15 @@
     }
 
     .TopBar .CalculateButton {
-        align-self: flex-end;
+        align-self: stretch;
+        justify-content: center;
+        min-height: 46px;
     }
 
     .Tab {
         flex: 1;
+        min-height: 42px;
+        padding: 8px 10px;
     }
 
 }

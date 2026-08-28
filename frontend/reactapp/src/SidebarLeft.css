@@ -67,3 +67,44 @@
     font-weight: 700;
 }
 
+@media (max-width: 640px) {
+    .SideBarLeft {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(132px, 42vw);
+        grid-template-rows: auto auto;
+        gap: 8px;
+        height: auto;
+        padding: 0 0 4px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-snap-type: x proximity;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .SideBarLeft::before {
+        grid-column: 1 / -1;
+        padding: 0 4px 2px;
+        font-size: 1.05rem;
+    }
+
+    .AssetIcon {
+        min-height: 72px;
+        padding: 8px;
+        scroll-snap-align: start;
+    }
+
+    .AssetIcon:hover {
+        transform: none;
+    }
+
+    .AssetIcon img {
+        width: 34px;
+        height: 34px;
+    }
+
+    .AssetIcon p {
+        font-size: 0.78rem;
+    }
+}
+

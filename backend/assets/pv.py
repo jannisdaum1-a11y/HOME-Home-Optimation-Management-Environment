@@ -17,7 +17,7 @@ class PV(Asset):
                  lon=None,
                  tilt=0,
                  azimuth=0,
-                 performance_ratio=1,
+                 performance_ratio=100,
                  temperature_coefficient=-0.005,
                  spec_capex=1000,
                  lifetime=False,
@@ -35,7 +35,7 @@ class PV(Asset):
         self.lon = lon if lon is not None else getattr(active_config, "lon", None)
         self.tilt = tilt
         self.azimuth = azimuth
-        self.performance_ratio = performance_ratio
+        self.performance_ratio = performance_ratio/100
         self.temperature_coefficient = temperature_coefficient
         self.weather = Weather(self.lat, self.lon, tilt=tilt, azimuth=azimuth)
 

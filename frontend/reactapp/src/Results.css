@@ -232,10 +232,32 @@
 @media (max-width: 640px) {
     .ResultsView {
         padding: 18px;
+        border-radius: 10px;
     }
 
     .ResultsHeader {
         flex-direction: column;
+    }
+
+    .ResultsTabs {
+        overflow-x: auto;
+        margin-bottom: 12px;
+        white-space: nowrap;
+    }
+
+    .ResultsTab {
+        flex: 0 0 auto;
+        min-height: 42px;
+        padding: 9px 10px;
+    }
+
+    .ResultGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .AreaPlot {
+        min-height: 320px;
+        overflow: hidden;
     }
 
     .ResultTableHeader {

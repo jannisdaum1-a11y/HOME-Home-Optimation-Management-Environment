@@ -104,3 +104,16 @@
     min-height: 20px;
     accent-color: var(--accent);
 }
+
+@media (max-width: 640px) {
+    .SideBarRight {
+        height: auto;
+        max-height: none;
+        padding-right: 0;
+    }
+
+    .SideBarRight input {
+        min-height: 44px;
+        font-size: 16px;
+    }
+}
