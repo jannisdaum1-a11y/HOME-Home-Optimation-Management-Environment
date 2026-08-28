@@ -24,7 +24,7 @@ type CalculationResult = {
     };
 };
 
-const apiUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:8000';
+const apiUrl = (import.meta.env.VITE_API_URL ?? 'http://localhost:8000').replace(/\/$/, '');
 
 function App() {
     const [objects, setObjects] = useState<Asset[]>([{...assets.Config}]);
@@ -55,7 +55,11 @@ function App() {
             setHasCalculated(true);
             setActiveTab('results');
         } catch (error) {
-            setCalculationError(error instanceof Error ? error.message : 'Berechnung konnte nicht gestartet werden.');
+            if (error instanceof TypeError && error.message === 'Failed to fetch') {
+                setCalculationError(`API nicht erreichbar. VITE_API_URL prüfen: ${apiUrl}`);
+            } else {
+                setCalculationError(error instanceof Error ? error.message : 'Berechnung konnte nicht gestartet werden.');
+            }
         } finally {
             setIsCalculating(false);
         }
