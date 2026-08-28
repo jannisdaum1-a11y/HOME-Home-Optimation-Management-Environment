@@ -50,7 +50,7 @@ class Prices(ABC):
         """
         Abstract method to format the prices DataFrame.
         cols: from (pd.datetime), to (pd.datetime), price (float [€/kwh]"""
-        return prices_df.loc[prices_df['from'] >= self.start_date].loc[prices_df['to'] <= self.end_date]
+        return prices_df
 
 
 class SpotMarktPrices(Prices):
@@ -59,20 +59,7 @@ class SpotMarktPrices(Prices):
 
     def _format_prices(self, prices_df: pd.DataFrame) -> pd.DataFrame:
 
-        prices_df.index = pd.to_datetime(
-            prices_df["Datum"]+" "+prices_df["von"],
-            format="%d.%m.%Y %H:%M",
-            dayfirst=True
-        )
-
-        timestamps = pd.date_range(
-                    start=self.start_date,
-                    end=self.end_date- self.timestep_length,
-                    freq=self.timestep_length
-                )
-
-        prices = prices_df["Spotmarktpreis in ct/kWh"][timestamps].rename("prices")
-        prices = self._convert_units(prices, from_unit="ct/kWh", to_unit="€/kWh")
+        prices = self._convert_units(prices_df["Spotmarktpreis in ct/kWh"], from_unit="ct/kWh", to_unit="€/kWh")
 
         return prices
 
