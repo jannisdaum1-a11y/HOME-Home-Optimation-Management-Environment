@@ -51,7 +51,7 @@
         "image": "/assets/PV.png",
         "rated_power [P]": 400,
         "expandable" : false,
-        "power_limit [P]": 1000000000,
+        "power_limit [P]": 2000,
         "Location / Position":
         {
             "lat" : null,

@@ -12,9 +12,9 @@ class Asset:
 
         # General wacc or specific
         if wacc:
-            self.wacc = wacc
+            self.wacc = wacc/100
         elif get_config().wacc:
-            self.wacc = get_config().wacc
+            self.wacc = get_config().wacc/100
         else:
             self.wacc = 0
 
