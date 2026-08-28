@@ -43,7 +43,7 @@
         "class": "std_load",
         "name": "std_load",
         "image": "/assets/Load.png",
-        "normalized_load [P]": 1000
+        "normalized_load [Wh/year]": 2500
     },
     "PV": {
         "class": "pv",
