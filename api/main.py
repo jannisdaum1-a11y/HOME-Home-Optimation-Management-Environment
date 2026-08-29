@@ -77,10 +77,12 @@ def calculate(payload: CalculationPayload) -> dict:
 
     optimizer = Optimizer()
     results = optimizer.get_results()
+    initial_capex = optimizer.capex.to_dict(orient="records")[0] if not optimizer.capex.empty else {}
     Optimizer.objects.clear()
     return {
         "objective_value": optimizer.objective_value,
         "results": json.loads(results.to_json(orient="split", date_format="iso")),
+        "initial_capex": initial_capex,
     }
 
 

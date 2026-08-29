@@ -74,8 +74,9 @@ class GridConnection(Asset):
 
         # Cost Constraint
         def cost_constraint(model, t):
-            import_cost = getattr(model, f"p_import_{self.name}")[t] * self.import_prices[t]/1000
-            export_revenue = getattr(model, f"p_export_{self.name}")[t] * self.export_prices[t]/1000
+            hour_share = get_config().timestep.seconds / (60*60)
+            import_cost = getattr(model, f"p_import_{self.name}")[t] * self.import_prices[t] / 1000 * hour_share
+            export_revenue = getattr(model, f"p_export_{self.name}")[t] * self.export_prices[t] / 1000 * hour_share
             return getattr(model, f"costs_{self.name}")[t] == import_cost - export_revenue
         setattr(model, f"cost_const_{self.name}", Constraint(
             model.t,

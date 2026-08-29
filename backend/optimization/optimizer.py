@@ -15,6 +15,7 @@ class Optimizer():
         self.implementation()
         self.objective_function()
         self.solve()
+        self.getSystemCosts()
 
         self.results_t = None
         self.objective_value = None
@@ -75,27 +76,30 @@ class Optimizer():
     def getSystemCosts(self):
         system_costs_t = pd.DataFrame(index=self.model.t)
 
-        # Costs timeseries
         initial_discounted_cost = 0
         initial_cost = {}
         initial_cost["total_capex"] = 0
         for object in Optimizer.objects.values():
             initial_discounted_cost += object.get_discounted_capex(self.model)
             capex = object.get_capex(self.model)
-            initial_cost["capex_"+object.name] = capex
+            initial_cost["capex_" + object.name] = capex
             initial_cost["total_capex"] += capex
 
-        total_costs = [pyo.quicksum(
-            pyo.value(getattr(self.model, f"costs_{asset}")[t])
-            for asset in Optimizer.objects.keys()
-            if hasattr(self.model, f"costs_{asset}")
-        ) for t in self.model.t]
+        total_costs = [
+            pyo.quicksum(
+                pyo.value(getattr(self.model, f"costs_{asset}")[t])
+                for asset in Optimizer.objects.keys()
+                if hasattr(self.model, f"costs_{asset}")
+            )
+            for t in self.model.t
+        ]
         system_costs_t["system_costs"] = total_costs
-        system_costs_t["system_costs"].iloc[0] += initial_discounted_cost
-
+        if not system_costs_t.empty:
+            system_costs_t.loc[system_costs_t.index[0], "system_costs"] += initial_discounted_cost
+            system_costs_t["system_costs_aggregated"] = system_costs_t["system_costs"].cumsum()
         self.system_costs_t = system_costs_t
         self.capex = pd.DataFrame([initial_cost])
-            
+        return system_costs_t
 
     def get_results(self):
 
@@ -118,13 +122,11 @@ class Optimizer():
             results,
             index=self.model.t
         )
-        results_df = pd.concat([results_df, self.system_costs_t])
+        self.getSystemCosts()
+        results_df = pd.concat([results_df, self.system_costs_t], axis=1)
 
         self.results_t = results_df
         self.objective_value = pyo.value(self.model.obj)
-
-        
-
 
         return results_df
 
