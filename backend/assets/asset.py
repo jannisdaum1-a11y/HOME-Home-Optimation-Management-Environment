@@ -53,6 +53,9 @@ class Asset:
         year_share = (enddate-startdate).total_seconds() / (365*24*60*60)
         return  self.wacc * growth_factor / (growth_factor - 1) *year_share
 
-    def annualized_invest(self, model):
+    def get_discounted_capex(self, model):
+        return 0
+
+    def get_capex(self, model):
         return 0
 

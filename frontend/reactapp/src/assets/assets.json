@@ -64,7 +64,7 @@
             "temperature_coefficient" : -0.005
         },
         "Ecinomic Settings":{
-            "spec_capex [€/Wp]" : 0.5,
+            "spec_capex [€/Wp]" : 0.2,
             "lifetime [years]" : 25,
             "wacc[%]" : 5
         }

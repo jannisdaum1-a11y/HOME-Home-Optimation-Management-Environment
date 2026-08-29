@@ -8,7 +8,7 @@ from abc import ABC, abstractmethod
 
 import pandas as pd
 import numpy as np
-from pyomo.environ import ConcreteModel, Param, Var, NonNegativeReals, Binary, Constraint
+from pyomo.environ import ConcreteModel, Param, Var, NonNegativeReals, Binary, Constraint, Reals
 
 class GridConnection(Asset):
     counter = 0
@@ -28,9 +28,11 @@ class GridConnection(Asset):
 
         p_import = Var(model.t, domain=NonNegativeReals, bounds=(0, self.p_grid_max), initialize=0)
         p_export = Var(model.t, domain=NonNegativeReals, bounds=(0, abs(self.p_grid_min)), initialize=0)
+        costs = Var(model.t, domain=Reals, bounds=(0, abs(self.p_grid_min)), initialize=0)
 
         setattr(model, f"p_import_{self.name}", p_import)
         setattr(model, f"p_export_{self.name}", p_export)
+        setattr(model, f"costs_{self.name}", costs)
     
     def create_constraints(self, model:ConcreteModel):
 
@@ -69,7 +71,16 @@ class GridConnection(Asset):
             rule=lambda model, t: export_limit(model, t)
         )
         setattr(model, f"export_constraint_{self.name}", export_constraint)
-        return
+
+        # Cost Constraint
+        def cost_constraint(model, t):
+            import_cost = getattr(model, f"p_import_{self.name}")[t] * self.import_prices[t]/1000
+            export_revenue = getattr(model, f"p_export_{self.name}")[t] * self.export_prices[t]/1000
+            return getattr(model, f"costs_{self.name}")[t] == import_cost - export_revenue
+        setattr(model, f"cost_const_{self.name}", Constraint(
+            model.t,
+            rule= lambda model, t: cost_constraint(model, t)
+        ))
 
     def expand_objective(self, model:ConcreteModel):
         time_factor = (get_config().timestep.total_seconds() / 3600)  # Convert timestep to hours

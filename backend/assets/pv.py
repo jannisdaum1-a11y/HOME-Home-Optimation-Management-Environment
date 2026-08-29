@@ -73,7 +73,7 @@ class PV(Asset):
                 mutable=False
             )
 
-        setattr(model, f"Optimized_{self.name}", capacity)
+        setattr(model, f"P_rated_{self.name}", capacity)
 
         p_pv = Var(
             model.t,
@@ -84,7 +84,7 @@ class PV(Asset):
         setattr(model, f"p_{self.name}", p_pv)
 
         def pv_limit_rule(model, t):
-            return p_pv[t] <= capacity * output_factor[t]
+            return p_pv[t] <= getattr(model, f"P_rated_{self.name}") * output_factor[t]
 
         model.add_component(
             f"pv_limit_{self.name}",
@@ -97,9 +97,15 @@ class PV(Asset):
 
     def expand_objective(self, model:ConcreteModel):
         if self.expandable:
-            model.obj +=  self.spec_capex * getattr(model, f"Optimized_{self.name}") * self.annuity_factor()
+            model.obj +=  self.spec_capex * getattr(model, f"P_rated_{self.name}") * self.annuity_factor()
         else:
             model.obj += self.spec_capex * self.capacity * self.annuity_factor()
         return
+
+    def get_capex(self, model):
+        return self.spec_capex * getattr(model, f"P_rated_{self.name}")
+
+    def get_discounted_capex(self, model):
+        return self.spec_capex * getattr(model, f"P_rated_{self.name}") * self.annuity_factor()
 
 

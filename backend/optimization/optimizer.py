@@ -34,7 +34,7 @@ class Optimizer():
         self.model.ens = pyo.Var(self.model.t, domain=pyo.NonNegativeReals, bounds=(0, np.inf), initialize=0)
         ## Dump Energy
         self.model.dump = pyo.Var(self.model.t, domain=pyo.NonNegativeReals, bounds=(0, np.inf), initialize=0)
-
+        ##
 
         # Power Balance
         self.model.power_balance_lhs_terms = [self.model.ens] #Positive Power (Generation)
@@ -45,6 +45,7 @@ class Optimizer():
             obj.create_constraints(self.model)
 
 
+        return
 
     def objective_function(self):
        
@@ -70,6 +71,30 @@ class Optimizer():
 
         for obj in Optimizer.objects.values():
             obj.expand_objective(self.model)
+
+    def getSystemCosts(self):
+        system_costs_t = pd.DataFrame(index=self.model.t)
+
+        # Costs timeseries
+        initial_discounted_cost = 0
+        initial_cost = {}
+        initial_cost["total_capex"] = 0
+        for object in Optimizer.objects.values():
+            initial_discounted_cost += object.get_discounted_capex(self.model)
+            capex = object.get_capex(self.model)
+            initial_cost["capex_"+object.name] = capex
+            initial_cost["total_capex"] += capex
+
+        total_costs = [pyo.quicksum(
+            pyo.value(getattr(self.model, f"costs_{asset}")[t])
+            for asset in Optimizer.objects.keys()
+            if hasattr(self.model, f"costs_{asset}")
+        ) for t in self.model.t]
+        system_costs_t["system_costs"] = total_costs
+        system_costs_t["system_costs"].iloc[0] += initial_discounted_cost
+
+        self.system_costs_t = system_costs_t
+        self.capex = pd.DataFrame([initial_cost])
             
 
     def get_results(self):
@@ -93,9 +118,11 @@ class Optimizer():
             results,
             index=self.model.t
         )
+        results_df = pd.concat([results_df, self.system_costs_t])
 
         self.results_t = results_df
         self.objective_value = pyo.value(self.model.obj)
+
         
 
 

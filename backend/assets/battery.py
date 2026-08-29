@@ -162,3 +162,9 @@ class Battery(Asset):
             e_capacity = getattr(model, f"e_capacity_{self.name}")
             return annuity_factor * spec_capex * (e_capacity)
         return 0
+
+    def get_capex(self, model):
+        return self.spec_capex * getattr(model, f"e_capacity_{self.name}")
+
+    def get_discounted_capex(self, model):
+        return self.spec_capex * getattr(model, f"e_capacity_{self.name}") * self.annuity_factor()
