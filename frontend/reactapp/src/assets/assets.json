@@ -36,13 +36,13 @@
     "ConstantLoad":{
         "class": "const_load",
         "name": "const_load",
-        "image": "/assets/Load.png",
+        "image": "/assets/const_loadprofile.png",
         "constant_load [P]": 300
     },
     "StandardLoadProfile":{
         "class": "std_load",
         "name": "std_load",
-        "image": "/assets/Load.png",
+        "image": "/assets/std_loadprofile.png",
         "normalized_load [Wh/year]": 2500
     },
     "PV": {

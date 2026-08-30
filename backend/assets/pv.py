@@ -83,16 +83,18 @@ class PV(Asset):
 
         setattr(model, f"p_{self.name}", p_pv)
 
+
+    def create_constraints(self, model:ConcreteModel):
+        model.power_balance_lhs_terms.append(getattr(model, f"p_{self.name}"))
+
         def pv_limit_rule(model, t):
-            return p_pv[t] <= getattr(model, f"P_rated_{self.name}") * output_factor[t]
+            return getattr(model, f"p_{self.name}")[t] <= getattr(model, f"P_rated_{self.name}") * getattr(model, f"pv_output_factor_{self.name}")[t]
 
         model.add_component(
             f"pv_limit_{self.name}",
             Constraint(model.t, rule=pv_limit_rule)
         )
-
-    def create_constraints(self, model:ConcreteModel):
-        model.power_balance_lhs_terms.append(getattr(model, f"p_{self.name}"))
+        
         return
 
     def expand_objective(self, model:ConcreteModel):
