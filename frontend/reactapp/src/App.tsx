@@ -104,11 +104,17 @@ function App() {
         tabIndex={0}>
             <main className="ViewContent">
                 {activeTab === 'configuration' ? (
+                    <>  
                     <DragAndDrop
                         objects={objects}
                         setObjects={setObjects}
                         setSelectedObject={setSelectedObject}
                     ></DragAndDrop>
+                    {
+                        !(selectedObject==objects[0]) && 
+                        <p id='escape_info'>Drücken Sie "Esc" um zur Config zurückzukehren</p>
+                    }
+                    </>
                 ) : (
                     <Results
                         hasCalculated={hasCalculated}
@@ -116,7 +122,6 @@ function App() {
                     ></Results>
                 )}
             </main>
-
         </div>
 
         {activeTab === 'configuration' && (

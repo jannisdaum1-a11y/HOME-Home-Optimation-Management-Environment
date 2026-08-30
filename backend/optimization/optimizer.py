@@ -76,21 +76,20 @@ class Optimizer():
     def getSystemCosts(self):
         system_costs_t = pd.DataFrame(index=self.model.t)
 
-        initial_discounted_cost = 0
-        initial_cost = {}
-        initial_cost["total_capex"] = 0
+        initial_discounted_cost = 0.0
+        initial_cost = {"total_capex": 0.0}
         for object in Optimizer.objects.values():
-            initial_discounted_cost += object.get_discounted_capex(self.model)
-            capex = object.get_capex(self.model)
+            initial_discounted_cost += float(pyo.value(object.get_discounted_capex(self.model)))
+            capex = float(pyo.value(object.get_capex(self.model)))
             initial_cost["capex_" + object.name] = capex
             initial_cost["total_capex"] += capex
 
         total_costs = [
-            pyo.quicksum(
-                pyo.value(getattr(self.model, f"costs_{asset}")[t])
+            float(pyo.value(pyo.quicksum(
+                getattr(self.model, f"costs_{asset}")[t]
                 for asset in Optimizer.objects.keys()
                 if hasattr(self.model, f"costs_{asset}")
-            )
+            )))
             for t in self.model.t
         ]
         system_costs_t["system_costs"] = total_costs
