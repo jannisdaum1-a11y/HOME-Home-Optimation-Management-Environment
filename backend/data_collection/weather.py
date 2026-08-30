@@ -51,7 +51,7 @@ class Weather():
             })
         except Exception as e:
             raise ValueError(
-            f"Fehler beim Fetchen der Wetterdaten: {e}, vollständige Antwort {df}"
+            f"Fehler beim Fetchen der Wetterdaten: {e}, vollständige Antwort {data}"
         ) from e
 
         df["time"] = pd.to_datetime(df["time"])
