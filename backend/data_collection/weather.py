@@ -41,13 +41,16 @@ class Weather():
 
         data = response.json()
 
-        df = pd.DataFrame({
-            "time": data["hourly"]["time"],
-            "temperature": data["hourly"]["temperature_2m"],
-            "cloud": data["hourly"]["cloud_cover"],
-            "radiation": data["hourly"]["shortwave_radiation"],
-            "specific_radiation": data["hourly"]["global_tilted_irradiance"]
-        })
+        try:
+            df = pd.DataFrame({
+                "time": data["hourly"]["time"],
+                "temperature": data["hourly"]["temperature_2m"],
+                "cloud": data["hourly"]["cloud_cover"],
+                "radiation": data["hourly"]["shortwave_radiation"],
+                "specific_radiation": data["hourly"]["global_tilted_irradiance"]
+            })
+        except Exception as e:
+            ValueError(f"Fehler beim fetchen der Wetterdaten: {e}")
 
         df["time"] = pd.to_datetime(df["time"])
 
