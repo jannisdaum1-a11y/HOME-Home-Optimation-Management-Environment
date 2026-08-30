@@ -21,14 +21,20 @@ type ParameterGroupProps = {
     values: Record<string, unknown>;
     path: string[];
     updateValue: (path: string[], value: ParameterValue) => void;
+    isFieldVisible?: (path: string[]) => boolean;
 };
 
-function ParameterGroup({values, path, updateValue}: ParameterGroupProps) {
+function ParameterGroup({values, path, updateValue, isFieldVisible}: ParameterGroupProps) {
     return (
         <div className="ParameterGroup">
             {Object.entries(values).map(([name, value]) => {
                 const valuePath = [...path, name];
                 const isDictionary = value !== null && typeof value === 'object' && !Array.isArray(value);
+                const visible = isFieldVisible?.(valuePath) ?? true;
+
+                if (!visible) {
+                    return null;
+                }
 
                 if (isDictionary) {
                     return (
@@ -38,6 +44,7 @@ function ParameterGroup({values, path, updateValue}: ParameterGroupProps) {
                             values={value as Record<string, unknown>}
                             path={valuePath}
                             updateValue={updateValue}
+                            isFieldVisible={isFieldVisible}
                         />
                     );
                 }
@@ -70,7 +77,7 @@ type CollapsibleParameterGroupProps = ParameterGroupProps & {
     name: string;
 };
 
-function CollapsibleParameterGroup({name, values, path, updateValue}: CollapsibleParameterGroupProps) {
+function CollapsibleParameterGroup({name, values, path, updateValue, isFieldVisible}: CollapsibleParameterGroupProps) {
     const [expanded, setExpanded] = useState(false);
 
     return (
@@ -84,13 +91,52 @@ function CollapsibleParameterGroup({name, values, path, updateValue}: Collapsibl
                 <span aria-hidden="true">{expanded ? '▾' : '▸'}</span>
                 {name}
             </button>
-            {expanded && <ParameterGroup values={values} path={path} updateValue={updateValue} />}
+            {expanded && <ParameterGroup values={values} path={path} updateValue={updateValue} isFieldVisible={isFieldVisible} />}
         </div>
     );
 }
 
+function getNestedValue(source: Record<string, unknown>, path: string[]): unknown {
+    return path.reduce<unknown>((current, key) => {
+        if (current !== null && typeof current === 'object' && !Array.isArray(current) && key in (current as Record<string, unknown>)) {
+            return (current as Record<string, unknown>)[key];
+        }
+        return undefined;
+    }, source);
+}
+
 function SidebarRight({selectedAsset, setAssets, setSelectedAsset} : SidebarRightProps){
     const asset = selectedAsset
+
+    const hiddenFieldRules = [
+        {
+            path: ['Economic-Settings', 'investment_limit [€]'],
+            isVisible: (currentAsset: Asset) => getNestedValue(currentAsset as Record<string, unknown>, ['Economic-Settings', 'Limit initial Investment']) === true,
+        },
+        {
+            path: ['power_limit [P]'],
+            isVisible: (currentAsset: Asset) => getNestedValue(currentAsset as Record<string, unknown>, ['expandable']) === true,
+        },
+        {
+            path: ['capacity_limit [Wh]'],
+            isVisible: (currentAsset: Asset) => getNestedValue(currentAsset as Record<string, unknown>, ['expandable']) === true,
+        },
+    ];
+
+    const isFieldVisible = (path: string[]) => {
+        if (!asset) {
+            return true;
+        }
+
+        return hiddenFieldRules.every(rule => {
+            if (rule.path.length !== path.length) {
+                return true;
+            }
+
+            const matches = rule.path.every((segment, index) => segment === path[index]);
+            return !matches || rule.isVisible(asset);
+        });
+    };
     
     function updateValue(path: string[], value: ParameterValue) {
         if (!selectedAsset) {
@@ -132,6 +178,7 @@ function SidebarRight({selectedAsset, setAssets, setSelectedAsset} : SidebarRigh
             values={Object.fromEntries(Object.entries(asset).filter(([name]) => !not_visible.includes(name)))}
             path={[]}
             updateValue={updateValue}
+            isFieldVisible={isFieldVisible}
         />
     )}
 </div>
