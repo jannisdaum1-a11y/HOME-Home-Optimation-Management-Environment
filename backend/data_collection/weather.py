@@ -50,7 +50,9 @@ class Weather():
                 "specific_radiation": data["hourly"]["global_tilted_irradiance"]
             })
         except Exception as e:
-            ValueError(f"Fehler beim fetchen der Wetterdaten: {e}")
+            raise ValueError(
+            f"Fehler beim Fetchen der Wetterdaten: {e}"
+        ) from e
 
         df["time"] = pd.to_datetime(df["time"])
 
