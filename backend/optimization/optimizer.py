@@ -45,6 +45,13 @@ class Optimizer():
             obj.create_variables(self.model)
             obj.create_constraints(self.model)
 
+        # Investment Constraint
+        investment_limit = get_config().investment_limit
+        if investment_limit:
+            self.model.investment_constraint = pyo.Constraint(
+                expr= sum(object.get_capex(self.model) for object in Optimizer.objects.values()) <= investment_limit
+            )
+
 
         return
 
