@@ -110,8 +110,20 @@ function SidebarRight({selectedAsset, setAssets, setSelectedAsset} : SidebarRigh
 
     const hiddenFieldRules = [
         {
-            path: ['Economic-Settings', 'expansion_investment_limit [€]'],
-            isVisible: (currentAsset: Asset) => getNestedValue(currentAsset as Record<string, unknown>, ['Economic-Settings', 'Limit initial Investment']) === true,
+            path: ['Economic-Settings', 'Investment Limit', 'expansion_investment_limit [€]'],
+            isVisible: (currentAsset: Asset) => getNestedValue(currentAsset as Record<string, unknown>, ['Economic-Settings', 'Investment Limit', 'Limit initial Investment']) === true,
+        },
+        {
+            path: ['Economic-Settings', 'Investment Limit', 'include_non_optimized_assets'],
+            isVisible: (currentAsset: Asset) => getNestedValue(currentAsset as Record<string, unknown>, ['Economic-Settings', 'Investment Limit', 'Limit initial Investment']) === true,
+        },
+        {
+            path: ['rated_power [P]'],
+            isVisible: (currentAsset: Asset) => getNestedValue(currentAsset as Record<string, unknown>, ['expandable']) === false,
+        },
+        {
+            path: ['capacity [Wh]'],
+            isVisible: (currentAsset: Asset) => getNestedValue(currentAsset as Record<string, unknown>, ['expandable']) === false,
         },
         {
             path: ['power_limit [P]'],

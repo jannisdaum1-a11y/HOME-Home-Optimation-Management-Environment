@@ -19,8 +19,11 @@
         
 
         "Economic-Settings" : {
-            "Limit initial Investment": false,
-            "expansion_investment_limit [€]": 10000,
+            "Investment Limit": {
+                "Limit initial Investment": false,
+                "include_non_optimized_assets": true,
+                "expansion_investment_limit [€]": 10000
+            },
             "wacc [%]" : 0
         },
         "Solver-Settings":
@@ -65,7 +68,7 @@
             "performance_ratio [%]" : 100,
             "temperature_coefficient" : -0.005
         },
-        "Ecinomic Settings":{
+        "Economic Settings":{
             "spec_capex [€/Wp]" : 0.2,
             "lifetime [years]" : 25,
             "wacc[%]" : 5
