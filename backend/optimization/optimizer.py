@@ -48,8 +48,8 @@ class Optimizer():
         # Investment Constraint
         investment_limit = get_config().investment_limit
         if investment_limit:
-            invest_cost = sum(object.get_capex(self.model) for object in Optimizer.objects.values())
-            if isinstance(invest_cost, pyo.Expression):
+            invest_cost = sum(object.get_capex(self.model) for object in Optimizer.objects.values() if getattr(object, "expandable", False))
+            if hasattr(invest_cost, "is_constant"):
                 self.model.investment_constraint = pyo.Constraint(
                     expr= invest_cost <= investment_limit
                 )

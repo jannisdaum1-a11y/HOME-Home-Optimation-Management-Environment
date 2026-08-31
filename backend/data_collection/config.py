@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 class Config():
-    def __init__(self, start_date, end_date, lat, lon, ens_cost,timestep=15, formulate_binary=False, wacc=0, investment_limit=20000, **kwargs):
+    def __init__(self, start_date, end_date, lat, lon, ens_cost,timestep=15, formulate_binary=False, wacc=0, expansion_investment_limit=20000, **kwargs):
         self.start_date = datetime.strptime(start_date, "%d.%m.%Y %H.%M")
         self.end_date = datetime.strptime(end_date, "%d.%m.%Y %H.%M")
         self.timestep = timedelta(minutes=timestep)
@@ -8,7 +8,7 @@ class Config():
         self.lon = lon
 
         self.wacc = wacc
-        self.investment_limit = investment_limit
+        self.investment_limit = expansion_investment_limit
         self.formulate_binary = formulate_binary
 
         self.ens_cost = ens_cost

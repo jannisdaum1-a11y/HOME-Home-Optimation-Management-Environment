@@ -20,7 +20,7 @@
 
         "Economic-Settings" : {
             "Limit initial Investment": false,
-            "investment_limit [€]": 10000,
+            "expansion_investment_limit [€]": 10000,
             "wacc [%]" : 0
         },
         "Solver-Settings":
