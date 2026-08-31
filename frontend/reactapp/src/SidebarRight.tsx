@@ -118,7 +118,7 @@ function SidebarRight({selectedAsset, setAssets, setSelectedAsset} : SidebarRigh
             isVisible: (currentAsset: Asset) => getNestedValue(currentAsset as Record<string, unknown>, ['Economic-Settings', 'Investment Limit', 'Limit initial Investment']) === true,
         },
         {
-            path: ['rated_power [P]'],
+            path: ['rated_power [W]'],
             isVisible: (currentAsset: Asset) => getNestedValue(currentAsset as Record<string, unknown>, ['expandable']) === false,
         },
         {
@@ -126,7 +126,7 @@ function SidebarRight({selectedAsset, setAssets, setSelectedAsset} : SidebarRigh
             isVisible: (currentAsset: Asset) => getNestedValue(currentAsset as Record<string, unknown>, ['expandable']) === false,
         },
         {
-            path: ['power_limit [P]'],
+            path: ['power_limit [W]'],
             isVisible: (currentAsset: Asset) => getNestedValue(currentAsset as Record<string, unknown>, ['expandable']) === true,
         },
         {

@@ -42,21 +42,21 @@
         "class": "const_load",
         "name": "const_load",
         "image": "/assets/const_loadprofile.png",
-        "constant_load [P]": 300
+        "constant_load [W]": 300
     },
     "StandardLoadProfile":{
         "class": "std_load",
         "name": "std_load",
         "image": "/assets/std_loadprofile.png",
-        "normalized_load [Wh/year]": 2500
+        "normalized_load [kWh/year]": 2500
     },
     "PV": {
         "class": "pv",
         "name": "pv",
         "image": "/assets/PV.png",
-        "rated_power [P]": 400,
+        "rated_power [W]": 400,
         "expandable" : false,
-        "power_limit [P]": 2000,
+        "power_limit [W]": 2000,
         "Location / Position":
         {
             "lat" : null,
