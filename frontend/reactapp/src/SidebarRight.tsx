@@ -110,7 +110,7 @@ function SidebarRight({selectedAsset, setAssets, setSelectedAsset} : SidebarRigh
 
     const hiddenFieldRules = [
         {
-            path: ['Economic-Settings', 'investment_limit [€]'],
+            path: ['Economic-Settings', 'expansion_investment_limit [€]'],
             isVisible: (currentAsset: Asset) => getNestedValue(currentAsset as Record<string, unknown>, ['Economic-Settings', 'Limit initial Investment']) === true,
         },
         {
