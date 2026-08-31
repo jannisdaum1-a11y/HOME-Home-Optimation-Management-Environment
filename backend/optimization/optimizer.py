@@ -4,6 +4,7 @@ import pyomo.environ as pyo
 
 from ..data_collection.config import get_config
 from ..data_collection.prices import Prices
+from ..assets.asset import Asset
 
 
 class Optimizer():
@@ -150,6 +151,7 @@ class Optimizer():
             tee=True
         )
 
+        Asset.reset_all_counters()
         return result
         
         

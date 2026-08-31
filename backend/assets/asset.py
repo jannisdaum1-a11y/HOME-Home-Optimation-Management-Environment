@@ -17,6 +17,11 @@ class Asset:
             self.wacc = get_config().wacc/100
         else:
             self.wacc = 0
+            
+    @classmethod
+    def reset_all_counters(cls):
+        for subclass in cls.__subclasses__():
+            subclass.counter = 0
 
     @abstractmethod
     def create_variables(self, model:ConcreteModel):
