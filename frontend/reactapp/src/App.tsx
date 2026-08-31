@@ -47,7 +47,11 @@ function App() {
             });
 
             if (!response.ok) {
-                throw new Error(`Backend antwortet mit Status ${response.status}`);
+               const error = await response.json();
+
+                throw new Error(
+                    `Backend antwortet mit Status ${response.status}: ${error.detail}`
+                );
             }
 
             const result: CalculationResult = await response.json();

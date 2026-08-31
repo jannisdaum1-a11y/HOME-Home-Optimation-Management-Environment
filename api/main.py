@@ -44,46 +44,62 @@ def health() -> dict:
 
 @app.post("/calculate")
 def calculate(payload: CalculationPayload) -> dict:
-    objects = payload.objects
+    try:
+        objects = payload.objects
 
-    # Define Config
-    classtypes = [obj.get("class", False) for obj in objects]
-    if not all(classtypes): ValueError("Unknown or undefined class")
-    if not "config" in classtypes: ValueError("No Config found")
-
-
-
-    for object in objects:
-        #Unpack sub-dictionaries
-        object = unpack_subdicts(object)
-        class_type = object.get("class", False)
-        if class_type == "config":
-            set_config(Config(**object))
-            # Define Model
-            #prices = SpotMarktPrices(DATA_DIR / "spotmarktpreise.csv")
-            export_prices = ConstPrice(const_price=0.08)
-            prices = ConstPrice(const_price=0.35)
-        elif class_type == "pv":
-            PV(**object)
-        elif class_type == "battery":
-            Battery(**object)
-        elif class_type =="const_load":
-            ConstantLoadProfile(**object)
-        elif class_type == "std_load":
-            StandardLoadProfile(**object)
-        elif class_type == "grid_connection":
-            GridConnection(import_prices=prices, export_prices=export_prices, **object)
+        # Define Config and basic checks
+        classtypes = [obj.get("class", False) for obj in objects]
+        if not all(classtypes): raise ValueError("Unknown or undefined class")
+        if not "config" in classtypes: raise ValueError("No Config found")
+        if not any(["load" in classtype for classtype in classtypes]): raise ValueError("Include at least one load object")
 
 
-    optimizer = Optimizer()
-    results = optimizer.get_results()
-    initial_capex = optimizer.capex.to_dict(orient="records")[0] if not optimizer.capex.empty else {}
-    Optimizer.objects.clear()
-    return {
-        "objective_value": optimizer.objective_value,
-        "results": json.loads(results.to_json(orient="split", date_format="iso")),
-        "initial_capex": initial_capex,
-    }
+
+        for object in objects:
+            #Unpack sub-dictionaries
+            object = unpack_subdicts(object)
+            class_type = object.get("class", False)
+            if class_type == "config":
+                set_config(Config(**object))
+                # Define Model
+                #prices = SpotMarktPrices(DATA_DIR / "spotmarktpreise.csv")
+                export_prices = ConstPrice(const_price=0.08)
+                prices = ConstPrice(const_price=0.35)
+            elif class_type == "pv":
+                PV(**object)
+            elif class_type == "battery":
+                Battery(**object)
+            elif class_type =="const_load":
+                ConstantLoadProfile(**object)
+            elif class_type == "std_load":
+                StandardLoadProfile(**object)
+            elif class_type == "grid_connection":
+                GridConnection(import_prices=prices, export_prices=export_prices, **object)
+
+
+        optimizer = Optimizer()
+        results = optimizer.get_results()
+        initial_capex = optimizer.capex.to_dict(orient="records")[0] if not optimizer.capex.empty else {}
+        Optimizer.objects.clear()
+        return {
+            "objective_value": optimizer.objective_value,
+            "results": json.loads(results.to_json(orient="split", date_format="iso")),
+            "initial_capex": initial_capex,
+        }
+
+    except ValueError as e:
+        Optimizer.objects.clear()
+        raise HTTPException(
+            status_code=400,
+            detail=str(e)
+        )
+
+    except Exception as e:
+        Optimizer.objects.clear()
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )
 
 
     
