@@ -29,8 +29,8 @@ class Weather():
             "end_date": self.end_date.strftime("%Y-%m-%d"),
             "hourly": [
                 "temperature_2m",
-                "cloud_cover",
-                "shortwave_radiation",
+ #               "cloud_cover",
+ #               "shortwave_radiation",
                 "global_tilted_irradiance"
             ],
             "tilt": self.tilt,
@@ -45,8 +45,8 @@ class Weather():
             df = pd.DataFrame({
                 "time": data["hourly"]["time"],
                 "temperature": data["hourly"]["temperature_2m"],
-                "cloud": data["hourly"]["cloud_cover"],
-                "radiation": data["hourly"]["shortwave_radiation"],
+                #"cloud": data["hourly"]["cloud_cover"],
+                #"radiation": data["hourly"]["shortwave_radiation"],
                 "specific_radiation": data["hourly"]["global_tilted_irradiance"]
             })
         except Exception as e:
