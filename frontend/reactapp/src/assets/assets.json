@@ -36,7 +36,23 @@
         "name": "grid_connection",
         "image": "/assets/GridConnection.png",
         "p_grid_min [W]": -800,
-        "p_grid_max [W]": 11000
+        "p_grid_max [W]": 11000,
+        "Pricing": {
+            "use_constant_prices": true,
+            "ConstantPrices": {
+                "import_price [€/kWh]": 0.35,
+                "export_price [€/kWh]": 0.08
+
+            },
+            "use_dynamic_prices": false,
+            "DynamicPrices [Gekoppelt an Spotpreisen]" : {
+                "additional_cost [€/kWh]": 0.1,
+                "grid_fees [€/kWh]": 0.1,
+                "taxes [€/MWh]": 0.1,
+                "export_multiplier": 0.2
+
+            }
+        }
     },
     "ConstantLoad":{
         "class": "const_load",

@@ -133,6 +133,14 @@ function SidebarRight({selectedAsset, setAssets, setSelectedAsset} : SidebarRigh
             path: ['capacity_limit [Wh]'],
             isVisible: (currentAsset: Asset) => getNestedValue(currentAsset as Record<string, unknown>, ['expandable']) === true,
         },
+        {
+            path: ['Pricing', 'ConstantPrices'],
+            isVisible: (currentAsset: Asset) => getNestedValue(currentAsset as Record<string, unknown>, ['Pricing', 'use_constant_prices']) === true,
+        },
+        {
+            path: ['Pricing', 'DynamicPrices [Gekoppelt an Spotpreisen]'],
+            isVisible: (currentAsset: Asset) => getNestedValue(currentAsset as Record<string, unknown>, ['Pricing', 'use_dynamic_prices']) === true,
+        },
     ];
 
     const isFieldVisible = (path: string[]) => {

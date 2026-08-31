@@ -57,14 +57,10 @@ def calculate(payload: CalculationPayload) -> dict:
 
         for object in objects:
             #Unpack sub-dictionaries
-            object = unpack_subdicts(object)
+            object = unpack_subdicts(object, {})
             class_type = object.get("class", False)
             if class_type == "config":
                 set_config(Config(**object))
-                # Define Model
-                #prices = SpotMarktPrices(DATA_DIR / "spotmarktpreise.csv")
-                export_prices = ConstPrice(const_price=0.08)
-                prices = ConstPrice(const_price=0.35)
             elif class_type == "pv":
                 PV(**object)
             elif class_type == "battery":
@@ -74,6 +70,24 @@ def calculate(payload: CalculationPayload) -> dict:
             elif class_type == "std_load":
                 StandardLoadProfile(**object)
             elif class_type == "grid_connection":
+                if object.get('use_constant_prices', False) and object.get("use_dynamic_prices", False):
+                    raise ValueError("One object cannot be priced dynamic and constant simultaneously")
+                elif object.get('use_constant_prices', False):
+                    import_price = object.get('import_price')
+                    export_price = object.get('export_price')
+                    export_prices = ConstPrice(const_price=export_price)
+                    prices = ConstPrice(const_price=import_price)
+                elif object.get("use_dynamic_prices", False):
+                    raise ValueError("Dynamic Prices not implemented yet")
+                    add = object.get("additional_cost", 0)
+                    grid_fees = object.get("grid_fees", 0)
+                    taxes = object.get("taxes", 0)
+
+                    import_prices = SpotMarktPrices()
+                    export_prices = SpotMarktPrices()
+                else:
+                    raise ValueError("Something ist Wrong with the pricing")
+
                 GridConnection(import_prices=prices, export_prices=export_prices, **object)
 
 
