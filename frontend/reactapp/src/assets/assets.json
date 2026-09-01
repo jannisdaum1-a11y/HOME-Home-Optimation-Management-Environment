@@ -99,13 +99,23 @@
         "expandable" : false,
         "capacity_limit [Wh]" : 10000,
         "Technology Settings": {
-            "max_charge_rate [W]" :1000,
-            "max_discharge_rate [W]" :1000,
-            "min_rel_soc [%]": 20,
-            "max_rel_soc [%]": 100,
-            "initial_rel_soc [%]" : 0.5,
-            "charge_efficiency [%]" : 100,
-            "discharge_efficiency [%]" : 100
+            "limit_charge_power": {
+                "limit_charge_power_by [C-Rate]" : false,
+                "max_charge_rate [C-Rate]" :0.5,
+                "max_discharge_rate [C-Rate]" :0.5,
+                "limit_charge_power_by [W]" : true,
+                "max_charge_power [W]" : 1000,
+                "max_discharge_power [W]" : 1000
+            },
+            "SOC Settings": {
+                "min_rel_soc [%]": 20,
+                "max_rel_soc [%]": 100,
+                "initial_rel_soc [%]" : 0.5
+            },
+            "Efficiency Settings": {
+                "charge_efficiency [%]" : 100,
+                "discharge_efficiency [%]" : 100 
+            }  
         },
         "Economic Settings":{
             "spec_capex [€/Wh]" : 0.35,

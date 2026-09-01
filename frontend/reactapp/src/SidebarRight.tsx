@@ -156,6 +156,22 @@ function SidebarRight({selectedAsset, setAssets, setSelectedAsset} : SidebarRigh
             path: ['Pricing', 'DynamicPrices [Gekoppelt an Spotpreisen]'],
             isVisible: (currentAsset: Asset) => getNestedValue(currentAsset as Record<string, unknown>, ['Pricing', 'use_dynamic_prices']) === true,
         },
+        {
+            path: ['Technology Settings', 'limit_charge_power', 'max_charge_rate [C-Rate]'],
+            isVisible: (currentAsset: Asset) => getNestedValue(currentAsset as Record<string, unknown>, ['Technology Settings', 'limit_charge_power', 'limit_charge_power_by [C-Rate]']) === true,
+        },
+        {
+            path: ['Technology Settings', 'limit_charge_power', 'max_discharge_rate [C-Rate]'],
+            isVisible: (currentAsset: Asset) => getNestedValue(currentAsset as Record<string, unknown>, ['Technology Settings', 'limit_charge_power', 'limit_charge_power_by [C-Rate]']) === true,
+        },
+        {
+            path: ['Technology Settings', 'limit_charge_power', 'max_charge_power [W]'],
+            isVisible: (currentAsset: Asset) => getNestedValue(currentAsset as Record<string, unknown>, ['Technology Settings', 'limit_charge_power', 'limit_charge_power_by [W]']) === true,
+        },
+        {
+            path: ['Technology Settings', 'limit_charge_power', 'max_discharge_power [W]'],
+            isVisible: (currentAsset: Asset) => getNestedValue(currentAsset as Record<string, unknown>, ['Technology Settings', 'limit_charge_power', 'limit_charge_power_by [W]']) === true,
+        },
     ];
 
     const isFieldVisible = (path: string[]) => {

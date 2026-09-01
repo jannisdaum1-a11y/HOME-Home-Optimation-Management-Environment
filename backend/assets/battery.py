@@ -10,8 +10,10 @@ class Battery(Asset):
     counter = 0
     def __init__(self,
                  capacity=0,
-                 max_charge_rate=1000,
-                 max_discharge_rate=1000,
+                 max_charge_power=1000,  #C-Rate
+                 max_discharge_power=1000,   #C-Rate
+                 max_charge_rate=0.5,  #C-Rate
+                 max_discharge_rate=0.5,   #C-Rate
                  initial_rel_soc=0.5,
                  min_rel_soc=0,
                  max_rel_soc=100,
@@ -49,8 +51,16 @@ class Battery(Asset):
     def create_variables(self, model):
 
         # Create charge and discharge power variables
-        p_charge = Var(model.t, domain=NonNegativeReals, bounds=(0, self.max_charge_rate))
-        p_discharge = Var(model.t, domain=NonNegativeReals, bounds=(0, self.max_discharge_rate))
+        if self.max_charge_rate and self.max_discharge_rate:
+            p_charge = Var(model.t, domain=NonNegativeReals, initialize=0)
+            p_discharge = Var(model.t, domain=NonNegativeReals, initialize=0)
+        elif self.max_charge_power and self.max_discharge_power:
+            p_charge = Var(model.t, domain=NonNegativeReals, bounds=(0, self.max_charge_power), initialize=0)
+            p_discharge = Var(model.t, domain=NonNegativeReals, bounds=(0, self.max_discharge_power), initialize=0)
+        else:
+            p_charge = Var(model.t, domain=NonNegativeReals, bounds=(0, np.inf), initialize=0)
+            p_discharge = Var(model.t, domain=NonNegativeReals, bounds=(0, np.inf), initialize=0)
+
         setattr(model, f"p_charge_{self.name}", p_charge)
         setattr(model, f"p_discharge_{self.name}", p_discharge)
 
@@ -71,6 +81,15 @@ class Battery(Asset):
 
 
     def create_constraints(self, model):
+
+        # Charging Power Constarints
+        if self.max_charge_rate and self.max_discharge_rate:
+            def charge_power_constraint(model, t):
+                return getattr(model, f"p_charge_{self.name}")[t] <= self.max_charge_rate * getattr(model, f"e_capacity_{self.name}")
+            def discharge_power_constraint(model, t):
+                return getattr(model, f"p_discharge_{self.name}")[t] <= self.max_discharge_rate * getattr(model, f"e_capacity_{self.name}")
+            setattr(model, f"charge_power_constraint_{self.name}", Constraint(model.t, rule= lambda model, t: charge_power_constraint(model, t)))
+            setattr(model, f"discharge_power_constraint_{self.name}", Constraint(model.t, rule= lambda model, t: discharge_power_constraint(model, t)))
 
         # State of charge dynamics
         def state_of_charge(model, t):
