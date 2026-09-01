@@ -104,21 +104,37 @@
     .DragAndDrop {
         min-height: 52dvh;
         align-content: flex-start;
-        padding: 14px 8px;
+        justify-content: flex-start;
+        gap: 8px;
+        padding: 14px 10px;
         border-radius: 10px;
     }
 
+    .DragAndDrop p {
+        max-width: 100%;
+        font-size: 0.8rem;
+    }
+
     .DisplayObject {
-        width: calc(50% - 16px);
-        min-width: 126px;
-        min-height: 148px;
-        margin: 8px;
+        width: calc(50% - 8px);
+        min-width: 120px;
+        min-height: 128px;
+        margin: 0;
         padding: 12px 8px;
     }
 
     .DisplayObject:hover {
-        min-height: 148px;
+        min-height: 128px;
         transform: none;
+    }
+
+    .DisplayObject img {
+        width: 54px;
+        height: 54px;
+    }
+
+    .DisplayObject p {
+        font-size: 0.72rem;
     }
 
     .DeleteObject {

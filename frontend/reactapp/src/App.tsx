@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 
 import SidebarLeft from './SidebarLeft'
@@ -28,6 +28,17 @@ function App() {
     const [resultsHistory, setResultsHistory] = useState<CalculationResultEntry[]>([]);
     const [isCalculating, setIsCalculating] = useState(false);
     const [calculationError, setCalculationError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                setSelectedObject(objects[0] ?? null);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [objects]);
 
     async function startCalculation() {
         setIsCalculating(true);
@@ -103,8 +114,16 @@ function App() {
             </aside>
         )}
         
-        <div className='Workspace' 
-        onKeyDown={(e)=>e.key ==='Escape'?setSelectedObject(objects[0])??null:null}
+        <div className='Workspace'
+        onClick={(event) => {
+            const target = event.currentTarget;
+            target.focus();
+        }}
+        onKeyDown={(e)=>{
+            if (e.key === 'Escape') {
+                setSelectedObject(objects[0] ?? null);
+            }
+        }}
         tabIndex={0}>
             <main className="ViewContent">
                 {activeTab === 'configuration' ? (

@@ -330,24 +330,54 @@
 
 @media (max-width: 640px) {
     .ResultsView {
-        padding: 18px;
+        padding: 18px 14px;
         border-radius: 10px;
     }
 
     .ResultsHeader {
         flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
     }
 
     .ResultsTabs {
-        overflow-x: auto;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: 100%;
+        overflow: visible;
         margin-bottom: 12px;
-        white-space: nowrap;
+        white-space: normal;
     }
 
     .ResultsTab {
         flex: 0 0 auto;
         min-height: 42px;
         padding: 9px 10px;
+        font-size: 0.76rem;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .ResultTabPanel {
+        padding: 12px 0 0;
+    }
+
+    .ComparisonItem {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .ComparisonSummary {
+        grid-template-columns: 1fr;
+    }
+
+    .ComparisonCard {
+        padding: 12px;
+    }
+
+    .ComparisonChartBlock {
+        padding: 10px;
     }
 
     .ResultGrid {
@@ -364,15 +394,11 @@
         flex-direction: column;
     }
 
-    .ResultsTabs {
-        overflow-x: auto;
+    .ResultTableWrapper {
+        max-height: 220px;
     }
 
-    .ResultsTab {
-        white-space: nowrap;
-    }
-
-    .ResultGrid {
-        grid-template-columns: 1fr;
+    .ResultTable {
+        font-size: 0.72rem;
     }
 }

@@ -70,21 +70,70 @@ type DragAndDropProps = {
 };
 function DragAndDrop({objects, setObjects, setSelectedObject}: DragAndDropProps){
 
-    function handleDrop(e: React.DragEvent<HTMLDivElement>) {
-    e.preventDefault();
-    const object = e.dataTransfer.getData("asset") as keyof typeof assets;
-    if (!(object in assets)) {
-        return;
+    function handleDropFromAsset(assetName: string | null) {
+        if (!assetName || !(assetName in assets)) {
+            return;
+        }
+
+        const object = assetName as keyof typeof assets;
+        let data = structuredClone(assets[object]) as unknown as Asset;
+
+        data = applyDefaults(data, objects[0] ?? {}) as Asset;
+
+        data.name = data.name + "_" + counter[object]++;
+        setObjects(prev => [...prev, data]);
+        setSelectedObject(data);
     }
 
-    let data = structuredClone(assets[object]) as unknown as Asset;
+    function handleDrop(e: React.DragEvent<HTMLDivElement>) {
+        e.preventDefault();
+        const object = e.dataTransfer.getData("asset") || (window as Window & {__pendingAsset?: string}).__pendingAsset || null;
+        handleDropFromAsset(object);
+        delete (window as Window & {__pendingAsset?: string}).__pendingAsset;
+    }
 
-    data = applyDefaults(data, objects[0] ?? {}) as Asset;
+    function handleTouchDrop(e: React.TouchEvent<HTMLDivElement>) {
+        const touch = e.changedTouches[0];
+        if (!touch) {
+            return;
+        }
 
-    data.name = data.name + "_" + counter[object]++;
-    setObjects(prev => [...prev, data]);
-    setSelectedObject(data)
-    console.log(objects);
+        const element = document.elementFromPoint(touch.clientX, touch.clientY);
+        const object = (window as Window & {__pendingAsset?: string}).__pendingAsset || null;
+        const deleteButton = element?.closest('.DeleteObject');
+        const selectedObjectElement = element?.closest('.DisplayObject');
+
+        if (deleteButton) {
+            delete (window as Window & {__pendingAsset?: string}).__pendingAsset;
+            return;
+        }
+
+        if (!object && selectedObjectElement) {
+            const objectName = selectedObjectElement.getAttribute('data-object-name');
+            const nextObject = objectName ? objects.find(item => item.name === objectName) ?? null : null;
+            if (nextObject) {
+                setSelectedObject(nextObject);
+            }
+            delete (window as Window & {__pendingAsset?: string}).__pendingAsset;
+            return;
+        }
+
+        const isEmptyBackgroundTap = !element || !element.closest('.DisplayObject') && !element.closest('.DeleteObject');
+
+        if (isEmptyBackgroundTap && !object) {
+            setSelectedObject(objects[0] ?? null);
+            delete (window as Window & {__pendingAsset?: string}).__pendingAsset;
+            return;
+        }
+
+        if (!element || !element.closest('.DragAndDrop')) {
+            delete (window as Window & {__pendingAsset?: string}).__pendingAsset;
+            return;
+        }
+
+        e.preventDefault();
+        handleDropFromAsset(object);
+        delete (window as Window & {__pendingAsset?: string}).__pendingAsset;
     }
 
     function handleDelete(objectName: unknown) {
@@ -96,7 +145,14 @@ function DragAndDrop({objects, setObjects, setSelectedObject}: DragAndDropProps)
     return (
         <div className='DragAndDrop' 
         onDragOver={(e) => e.preventDefault()}
-        onDrop={handleDrop}>
+        onDrop={handleDrop}
+        onClick={(event) => {
+            const target = event.target as HTMLElement;
+            if (!target.closest('.DisplayObject') && !target.closest('.DeleteObject')) {
+                setSelectedObject(objects[0] ?? null);
+            }
+        }}
+        onTouchEnd={handleTouchDrop}>
             {
                 objects.length===0 && (<p>Ziehen Sie die gewünschten Elemente in den unteren Bereich</p>)
             }
@@ -105,6 +161,7 @@ function DragAndDrop({objects, setObjects, setSelectedObject}: DragAndDropProps)
                     !(element.name==="config") &&
                     <div className='DisplayObject'
                      key={String(element.name)}
+                     data-object-name={String(element.name)}
                      onClick={() => setSelectedObject(element)}>
                         <DisplayObject object={element}></DisplayObject>
                         <button

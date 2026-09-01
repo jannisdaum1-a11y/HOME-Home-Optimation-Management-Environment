@@ -15,9 +15,17 @@ type AssetIconProps = {
 
 function AssetIcon({name, data}: AssetIconProps){
     const image_path = data.image;
+
+    const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        (window as Window & {__pendingAsset?: string}).__pendingAsset = name;
+    };
+
     return (
-        <div className='AssetIcon' key={name} 
-        draggable onDragStart={(e) => e.dataTransfer.setData("asset", name)}>
+        <div className='AssetIcon' key={name}
+            draggable
+            onDragStart={(e) => e.dataTransfer.setData("asset", name)}
+            onTouchStart={handleTouchStart}>
             <img src={image_path ?? ""} alt={name} draggable={false}/>
             <p>{name}</p>
         </div>

@@ -214,6 +214,31 @@
         padding-top: max(10px, env(safe-area-inset-top));
     }
 
+    .TopBar {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 10px;
+        margin: 0 12px 14px;
+    }
+
+    .Tabs {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: 100%;
+    }
+
+    .Tab {
+        flex: 1;
+        min-height: 42px;
+        padding: 8px 10px;
+    }
+
+    .CalculateButton {
+        width: 100%;
+        justify-content: center;
+        min-height: 46px;
+    }
+
     .MainContent {
         display: flex;
         flex-direction: column;
@@ -248,28 +273,19 @@
         padding: 0;
     }
 
-    .Tabs {
-        width: 100%;
+    .ViewContent {
+        min-height: 0;
     }
 
-    .TopBar {
-        align-items: stretch;
-        flex-direction: column;
-        margin: 0 12px 14px;
+    #escape_info {
+        left: 12px;
+        right: 12px;
+        bottom: 14px;
+        transform: none;
+        white-space: normal;
+        text-align: center;
+        font-size: 0.72rem;
     }
-
-    .TopBar .CalculateButton {
-        align-self: stretch;
-        justify-content: center;
-        min-height: 46px;
-    }
-
-    .Tab {
-        flex: 1;
-        min-height: 42px;
-        padding: 8px 10px;
-    }
-
 }
 
 
