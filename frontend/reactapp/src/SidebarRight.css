@@ -76,7 +76,8 @@
     text-transform: uppercase;
 }
 
-.SideBarRight input {
+.SideBarRight input,
+.SideBarRight textarea {
     width: 100%;
     min-height: 40px;
     padding: 8px 10px;
@@ -86,14 +87,28 @@
     color: var(--ink);
     background: #fbfcfb;
     transition: border-color 160ms ease, box-shadow 160ms ease;
+    overflow: auto;
+    text-overflow: clip;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    resize: vertical;
+    font: inherit;
 }
 
-.SideBarRight input:focus {
+.SideBarRight textarea {
+    min-height: 78px;
+    line-height: 1.45;
+}
+
+.SideBarRight input:focus,
+.SideBarRight textarea:focus {
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgba(8, 127, 120, 0.13);
 }
 
-.SideBarRight input:disabled {
+.SideBarRight input:disabled,
+.SideBarRight textarea:disabled {
     color: #849298;
     background: #eef2f0;
     cursor: not-allowed;

@@ -64,7 +64,8 @@
         "class": "std_load",
         "name": "std_load",
         "image": "/assets/std_loadprofile.png",
-        "normalized_load [kWh/year]": 2500
+        "normalized_load [kWh/year]": 2500,
+        "info": "The load profile is based on the standard load profile for households in Germany, as defined by the German Association of Energy and Water"
     },
     "PV": {
         "class": "pv",

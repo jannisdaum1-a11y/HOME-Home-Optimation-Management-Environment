@@ -8,6 +8,7 @@ type Asset = {
 
 /**Define which keys should not be ediable or displayed */
 const not_visible: string[] = ["class", "image"]
+const not_editable: string[] = ["info"]
 
 type SidebarRightProps = {
     selectedAsset:Asset | null;
@@ -49,23 +50,37 @@ function ParameterGroup({values, path, updateValue, isFieldVisible}: ParameterGr
                     );
                 }
 
+                const isTextValue = typeof value === 'string';
+
                 return (
                     <div className="ParameterField" key={valuePath.join('.')}>
                         <label>{name}: </label>
-                        <input
-                            type={typeof value === 'boolean' ? 'checkbox' : typeof value === 'number' ? 'number' : 'text'}
-                            {...(typeof value === 'boolean'
-                                ? {checked: value}
-                                : {value: String(value ?? '')})}
-                            onChange={(event) => {
-                                const nextValue = typeof value === 'boolean'
-                                    ? event.currentTarget.checked
-                                    : typeof value === 'number'
-                                        ? Number(event.currentTarget.value)
-                                        : event.currentTarget.value;
-                                updateValue(valuePath, nextValue);
-                            }}
-                        />
+                        {isTextValue ? (
+                            <textarea
+                                value={String(value ?? '')}
+                                rows={3}
+                                onChange={(event) => {
+                                    updateValue(valuePath, event.currentTarget.value);
+                                }}
+                                disabled={not_editable.includes(name)}
+                            />
+                        ) : (
+                            <input
+                                type={typeof value === 'boolean' ? 'checkbox' : typeof value === 'number' ? 'number' : 'text'}
+                                {...(typeof value === 'boolean'
+                                    ? {checked: value}
+                                    : {value: String(value ?? '')})}
+                                onChange={(event) => {
+                                    const nextValue = typeof value === 'boolean'
+                                        ? event.currentTarget.checked
+                                        : typeof value === 'number'
+                                            ? Number(event.currentTarget.value)
+                                            : event.currentTarget.value;
+                                    updateValue(valuePath, nextValue);
+                                }}
+                                disabled={not_editable.includes(name)}
+                            />
+                        )}
                     </div>
                 );
             })}
