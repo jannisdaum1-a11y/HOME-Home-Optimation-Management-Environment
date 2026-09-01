@@ -12,10 +12,11 @@ type ResultsProps = {
     calculationResult: CalculationResult | null;
     resultsHistory: CalculationResultEntry[];
     setResultsHistory: React.Dispatch<React.SetStateAction<CalculationResultEntry[]>>;
+    activeResultsTab: ResultsTab;
+    setActiveResultsTab: React.Dispatch<React.SetStateAction<ResultsTab>>;
 };
 
-function Results({hasCalculated, calculationResult, resultsHistory, setResultsHistory}: ResultsProps) {
-    const [activeResultsTab, setActiveResultsTab] = useState<ResultsTab>('Zeitreihen');
+function Results({hasCalculated, calculationResult, resultsHistory, setResultsHistory, activeResultsTab, setActiveResultsTab}: ResultsProps) {
     const [selectedResultIds, setSelectedResultIds] = useState<string[]>([]);
 
     useEffect(() => {

@@ -7,7 +7,7 @@ import DragAndDrop from './DragAndDrop'
 import Results from './Results'
 
 import assets from './assets/assets.json'
-import { defaultCalculationName, type CalculationResult, type CalculationResultEntry } from './ResultTypes'
+import { defaultCalculationName, type CalculationResult, type CalculationResultEntry, type ResultsTab } from './ResultTypes'
 
 type Asset = {
     image?: string;
@@ -22,6 +22,7 @@ function App() {
     const [objects, setObjects] = useState<Asset[]>([{...assets.Config}]);
     const [selectedObject, setSelectedObject] = useState<Asset|null>(objects[0]??null)
     const [activeTab, setActiveTab] = useState<Tab>('configuration');
+    const [resultsTab, setResultsTab] = useState<ResultsTab>('Zeitreihen');
     const [hasCalculated, setHasCalculated] = useState(false);
     const [calculationResult, setCalculationResult] = useState<CalculationResult | null>(null);
     const [resultsHistory, setResultsHistory] = useState<CalculationResultEntry[]>([]);
@@ -124,6 +125,8 @@ function App() {
                         calculationResult={calculationResult}
                         resultsHistory={resultsHistory}
                         setResultsHistory={setResultsHistory}
+                        activeResultsTab={resultsTab}
+                        setActiveResultsTab={setResultsTab}
                     ></Results>
                 )}
             </main>
