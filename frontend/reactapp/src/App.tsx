@@ -7,6 +7,7 @@ import DragAndDrop from './DragAndDrop'
 import Results from './Results'
 
 import assets from './assets/assets.json'
+import { defaultCalculationName, type CalculationResult, type CalculationResultEntry } from './ResultTypes'
 
 type Asset = {
     image?: string;
@@ -14,15 +15,6 @@ type Asset = {
 };
 
 type Tab = 'configuration' | 'results';
-
-type CalculationResult = {
-    objective_value: number | null;
-    results: {
-        columns: string[];
-        index: string[];
-        data: (number | string | null)[][];
-    };
-};
 
 const apiUrl = (import.meta.env.VITE_API_URL ?? 'http://localhost:8000').replace(/\/$/, '');
 
@@ -32,6 +24,7 @@ function App() {
     const [activeTab, setActiveTab] = useState<Tab>('configuration');
     const [hasCalculated, setHasCalculated] = useState(false);
     const [calculationResult, setCalculationResult] = useState<CalculationResult | null>(null);
+    const [resultsHistory, setResultsHistory] = useState<CalculationResultEntry[]>([]);
     const [isCalculating, setIsCalculating] = useState(false);
     const [calculationError, setCalculationError] = useState<string | null>(null);
 
@@ -55,7 +48,13 @@ function App() {
             }
 
             const result: CalculationResult = await response.json();
+            const newEntry: CalculationResultEntry = {
+                id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+                name: defaultCalculationName(resultsHistory.length),
+                result,
+            };
             setCalculationResult(result);
+            setResultsHistory(current => [...current, newEntry]);
             setHasCalculated(true);
             setActiveTab('results');
         } catch (error) {
@@ -123,6 +122,8 @@ function App() {
                     <Results
                         hasCalculated={hasCalculated}
                         calculationResult={calculationResult}
+                        resultsHistory={resultsHistory}
+                        setResultsHistory={setResultsHistory}
                     ></Results>
                 )}
             </main>

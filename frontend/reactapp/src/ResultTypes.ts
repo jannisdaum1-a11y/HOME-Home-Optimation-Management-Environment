@@ -8,4 +8,14 @@ export type CalculationResult = {
     initial_capex?: Record<string, number | null>;
 };
 
-export type ResultsTab = 'Ausbauplanung' | 'Zeitreihen' | 'Wirtschaftlichkeit';
+export type CalculationResultEntry = {
+    id: string;
+    name: string;
+    result: CalculationResult;
+};
+
+export function defaultCalculationName(index: number) {
+    return `Rechnung ${index + 1}`;
+}
+
+export type ResultsTab = 'Ausbauplanung' | 'Zeitreihen' | 'Wirtschaftlichkeit' | 'Vergleich';

@@ -96,6 +96,105 @@
     padding: 22px 4px;
 }
 
+.ComparisonList {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.ComparisonItem {
+    display: grid;
+    grid-template-columns: minmax(0, 120px) minmax(0, 1fr);
+    gap: 14px;
+    align-items: end;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #f7faf9;
+}
+
+.ComparisonSelect {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.ComparisonSelect input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent);
+}
+
+.ComparisonNameField {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: var(--muted);
+    font-size: 0.8rem;
+}
+
+.ComparisonNameField input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--ink);
+    background: var(--panel);
+    font: inherit;
+}
+
+.ComparisonSummary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 18px;
+    align-items: start;
+}
+
+.ComparisonCard {
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: linear-gradient(180deg, rgba(8, 127, 120, 0.03), rgba(8, 127, 120, 0.01));
+}
+
+.ComparisonCard h3 {
+    margin: 0 0 14px;
+    color: var(--ink);
+    font-size: 1rem;
+}
+
+.ComparisonChartGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+
+.ComparisonChartBlock {
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.ComparisonChartBlockWide {
+    grid-column: auto;
+}
+
+.ComparisonChartBlock h4 {
+    margin: 0 0 10px;
+    color: var(--muted);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
 .AreaPlot {
     min-height: 390px;
     margin: 18px 0 22px;
