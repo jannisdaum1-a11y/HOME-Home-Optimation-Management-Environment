@@ -101,5 +101,4 @@ class StandardLoadProfile(LoadProfile):
         load_series = load_series/load_series.sum()
         load_series = load_series *self.normalized_load*1000/timestep_hours #*1000->kWh->Wh
 
-
         return load_series

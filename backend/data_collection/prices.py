@@ -54,14 +54,34 @@ class Prices(ABC):
 
 
 class SpotMarktPrices(Prices):
-    def __init__(self, file_path):
+    def __init__(self, file_path:str="data/spotmarktpreise.csv"):
         super().__init__(file_path, separator=';', decimal=',')
 
     def _format_prices(self, prices_df: pd.DataFrame) -> pd.DataFrame:
 
-        prices = self._convert_units(prices_df["Spotmarktpreis in ct/kWh"], from_unit="ct/kWh", to_unit="€/kWh")
+        prices = (self._convert_units(prices_df["Spotmarktpreis in ct/kWh"], from_unit="ct/kWh", to_unit="€/kWh")).values
 
-        return prices
+        return pd.Series(prices, index=prices_df.index)
+
+    def _load_prices(self):
+            try:
+                prices_df = pd.read_csv(self.price_file, sep=self.separator, decimal=self.decimal)
+                prices_df["datetime"] = pd.to_datetime(
+                    prices_df["Datum"] + " " + prices_df["bis"],
+                    format="%d.%m.%Y %H:%M"
+                )
+
+                prices_df = prices_df.set_index("datetime")               
+                return self._format_prices(prices_df)
+            except FileNotFoundError:
+                print(f"File not found: {self.price_file}")
+                return None
+            except pd.errors.EmptyDataError:
+                print(f"No data: {self.price_file} is empty")
+                return None
+            except pd.errors.ParserError:
+                print(f"Parsing error: {self.price_file} is malformed")
+                return None
 
 class ConstPrice(Prices):
     def __init__(self, const_price):

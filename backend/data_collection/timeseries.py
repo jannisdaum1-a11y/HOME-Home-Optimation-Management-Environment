@@ -13,10 +13,19 @@ class TimeSeries():
         end_time = active_config.end_date
         timestep = active_config.timestep
 
+
         # Resample available data to timedelt if necessary
         if(all([isinstance(index, pd.Timestamp) for index in data.index])):
             if not (data.index[1]-data.index[0] == timestep):
                 data.resample(rule=timestep).interpolate()
+
+            if start_time not in data.index:
+                raise ValueError(f"Start time {start_time} not found in data index")
+            if end_time not in data.index:
+                Warning(f"End time {end_time} not found in data index, try to expand data")
+                data = data.loc[start_time:]
+            else:
+                data = data.loc[start_time:end_time]
 
         #Genererate identical indices
         indexes = pd.date_range(start=start_time, end=end_time-timestep,freq=timestep)

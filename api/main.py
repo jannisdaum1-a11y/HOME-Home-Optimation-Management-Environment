@@ -76,19 +76,25 @@ def calculate(payload: CalculationPayload) -> dict:
                     import_price = object.get('import_price')
                     export_price = object.get('export_price')
                     export_prices = ConstPrice(const_price=export_price)
-                    prices = ConstPrice(const_price=import_price)
+                    import_prices = ConstPrice(const_price=import_price)
                 elif object.get("use_dynamic_prices", False):
-                    raise ValueError("Dynamic Prices not implemented yet")
                     add = object.get("additional_cost", 0)
                     grid_fees = object.get("grid_fees", 0)
                     taxes = object.get("taxes", 0)
+                    export_multiplier = object.get("export_multiplier", 1)
 
+                    # Construct import prices
                     import_prices = SpotMarktPrices()
+                    import_prices.prices_t +=  add + grid_fees + taxes
+
+                    # Construct export prices
                     export_prices = SpotMarktPrices()
+                    export_prices.prices_t +=  add + grid_fees + taxes
+                    export_prices.prices_t *= export_multiplier
                 else:
                     raise ValueError("Something ist Wrong with the pricing")
 
-                GridConnection(import_prices=prices, export_prices=export_prices, **object)
+                GridConnection(import_prices=import_prices, export_prices=export_prices, **object)
 
 
         optimizer = Optimizer()
